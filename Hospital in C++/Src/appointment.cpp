@@ -1,19 +1,51 @@
-// Appointment.cpp
 #include "../Headers/appointment.h"
 
-// Constructor
-Appointment::Appointment(int id, const Patient& patient, const Doctor& doctor, const Date& date, bool confirmed)
-    : id(id), patient(patient), doctor(doctor), date(date), confirmed(confirmed) {}
+Appointment::Appointment(int appointmentId, int patientId, int doctorId, 
+                         const std::string& dateTime, const std::string& status)
+    : appointmentId(appointmentId), patientId(patientId), doctorId(doctorId),
+      dateTime(dateTime), status(status) {}
 
-// Getters
-int Appointment::getId() const { return id; }
-Patient Appointment::getPatient() const { return patient; }
-Doctor Appointment::getDoctor() const { return doctor; }
-Date Appointment::getDate() const { return date; }
-bool Appointment::isConfirmed() const { return confirmed; }
+int Appointment::getAppointmentId() const {
+    return appointmentId;
+}
 
-// Setters
-void Appointment::setPatient(const Patient& newPatient) { patient = newPatient; }
-void Appointment::setDoctor(const Doctor& newDoctor) { doctor = newDoctor; }
-void Appointment::setDate(const Date& newDate) { date = newDate; }
-void Appointment::setConfirmed(bool newConfirmed) { confirmed = newConfirmed; }
+void Appointment::setAppointmentId(int id) {
+    appointmentId = id;
+}
+
+// Getter and setter for patientId
+int Appointment::getPatientId() const {
+    return patientId;
+}
+
+void Appointment::setPatientId(int id) {
+    patientId = id;
+}
+
+// Getter and setter for doctorId
+int Appointment::getDoctorId() const {
+    return doctorId;
+}
+
+void Appointment::setDoctorId(int id) {
+    doctorId = id;
+}
+
+// Getter and setter for dateTime
+std::string Appointment::getDateTime() const {
+    return dateTime;
+}
+
+void Appointment::setDateTime(const std::string& dateTime) {
+    this->dateTime = dateTime;
+}
+
+// Getter and setter for status
+std::string Appointment::getStatus() const {
+    return status;
+}
+
+void Appointment::setStatus(const std::string& status) {
+    this->status = status;
+}
+

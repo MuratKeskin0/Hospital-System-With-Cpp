@@ -1,41 +1,38 @@
-// Appointment.h
 #ifndef APPOINTMENT_H
 #define APPOINTMENT_H
 
-#include "Patient.h"
-#include "Doctor.h"
 #include <string>
-
-struct Date {
-    int day;
-    int month;
-    int year;
-};
 
 class Appointment {
 private:
-    int id;
-    Patient patient;
-    Doctor doctor;
-    Date date;
-    bool confirmed;
+    int appointmentId;
+    int patientId;
+    int doctorId;
+    std::string dateTime;  // Date and time as a string
+    std::string status;
 
 public:
-    // Constructor
-    Appointment(int id, const Patient& patient, const Doctor& doctor, const Date& date, bool confirmed);
+    Appointment(int appointmentId, int patientId, int doctorId, 
+                const std::string& dateTime, const std::string& status);
 
-    // Getters
-    int getId() const;
-    Patient getPatient() const;
-    Doctor getDoctor() const;
-    Date getDate() const;
-    bool isConfirmed() const;
+    // Getters and setters
+    int getAppointmentId() const;
+    void setAppointmentId(int id);
 
-    // Setters
-    void setPatient(const Patient& patient);
-    void setDoctor(const Doctor& doctor);
-    void setDate(const Date& date);
-    void setConfirmed(bool confirmed);
+    int getPatientId() const;
+    void setPatientId(int id);
+
+    int getDoctorId() const;
+    void setDoctorId(int id);
+
+    std::string getDateTime() const;
+    void setDateTime(const std::string& dateTime);
+
+    std::string getStatus() const;
+    void setStatus(const std::string& status);
+
+    // Other methods like reschedule, cancel, etc.
 };
 
-#endif // APPOINTMENT_H
+#endif
+

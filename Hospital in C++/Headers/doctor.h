@@ -1,30 +1,17 @@
-// Doctor.h
 #ifndef DOCTOR_H
 #define DOCTOR_H
 
+#include "users.h"
 #include <string>
 
-class Doctor {
+class Doctor : public User {
 private:
-    int id;
-    std::string firstName;
-    std::string lastName;
     std::string specialization;
 
 public:
-    // Constructor
-    Doctor(int id, const std::string& firstName, const std::string& lastName, const std::string& specialization);
-
-    // Getters
-    int getId() const;
-    std::string getFirstName() const;
-    std::string getLastName() const;
+    Doctor(int id, const std::string &name, const std::string &address, const std::string &mobile, const std::string &specialization);
     std::string getSpecialization() const;
-
-    // Setters
-    void setFirstName(const std::string& firstName);
-    void setLastName(const std::string& lastName);
-    void setSpecialization(const std::string& specialization);
+    void setSpecialization(const std::string &specialization);
 };
 
-#endif // DOCTOR_H
+#endif

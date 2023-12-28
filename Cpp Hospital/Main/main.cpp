@@ -7,6 +7,7 @@
 #include "../Headers/Patient.h"
 #include "../Src/Patient.cpp"
 #include "../Src/Database.cpp"
+#include "../Src/Appointment.cpp"
 
 using namespace std;
 
@@ -16,7 +17,6 @@ void defaultInformation();
 int main()
 {
     defaultInformation();
-    Database::readPatient();
     Database::setAllIdNumbers();
     Display();
 
@@ -68,7 +68,7 @@ int Display()
         else
         {
             
-            cout << "\n--------- WELCOME TO VOTING SYSTEM ---------\n";
+            cout << "\n--------- WELCOME TO HOSPITAL SYSTEM ---------\n";
         
             cout << "1- Login\n";
             cout << "2- Register\n";
@@ -90,7 +90,8 @@ int Display()
 
 void defaultInformation()
 {
-    Person *admin = new Admin(0, "admin","admin",1);
+    Person *admin = new Patient(0, "admin","admin","admin","admin",1);
     Person *user1 = new Patient(1, "murat", "123", "male", "123",0);
     Person *user2 = new Patient(2, "mehmet" ,"321", "male", "321",0);
+    Person *user3 =new Doctor(1,"doctor","eye","12345678","123",0);
 }

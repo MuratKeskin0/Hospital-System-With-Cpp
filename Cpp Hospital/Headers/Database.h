@@ -30,6 +30,7 @@ public:
 
     // Function about patient
     static void insertPatient(const Person &patient);
+    static void insertPerson(const Person& person);
     static int readPatient();
     static void showAllPatients();
     static int deletePatient(const int id);
@@ -45,7 +46,7 @@ public:
     static int readAppointment();
     static void showAllAppointments();
     static void deleteAppointment(int appointmentID);
-    //static void updateAppointmentint (int id, Type newType, const Doctor& newDoctor, const Patient& newPatient, const std::string& newDate, bool newIsConfirmed);
+    static void updateAppointmentInfo (int id, Appointment::Type newType, const Doctor& newDoctor, const Patient& newPatient, const std::string& newDate, bool newIsConfirmed);
     static void changeConfirmationStatus(int appointmentID);
     
     //complex functions
@@ -55,6 +56,8 @@ public:
     static void showAppointmentsByPatient(int patientId);
     static int deleteAppointmentsByDoctorandId(int doctorId, int appointmentId);
     static int getTotalNumberOfAppointments();
+    static Doctor* findDoctorById(int id);
+    static Patient* findPatientById(int id);
 
     static void setAllIdNumbers();
     

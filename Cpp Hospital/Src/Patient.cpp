@@ -5,7 +5,7 @@
 Patient::Patient(int id, const std::string& username, const std::string& phoneNumber, const std::string& gender, const std::string& password,const int &isAdmin)
     : Person(id, username, password,0), phoneNumber(phoneNumber), gender(gender) {
     Database::patients.push_back(this);
-    Database::insertPatient(*this);
+    Database::insertPerson(*this);
 }
 
 Patient::Patient(){}

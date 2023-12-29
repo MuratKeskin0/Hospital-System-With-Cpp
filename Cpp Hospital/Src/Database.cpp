@@ -943,3 +943,25 @@ void Database::setAllIdNumbers()
     appointmentID = maxAppointmentId + 1;
 }
 
+int Database::deleteAllData()
+{
+    const char* files[] = {"../txtFiles/patient.txt", "../txtFiles/appointment.txt", "../txtFiles/doctor.txt", "../txtFiles/admin.txt"};
+    int* counts[] = {&Database::patientCount, &Database::doctorCount, &Database::adminCount, &Database::appointmentCount};
+    const int fileCount = sizeof(files) / sizeof(files[0]);
+
+    for (int i = 0; i < fileCount; ++i)
+    {
+        FILE *file = fopen(files[i], "w");
+
+        if (file == NULL)
+        {
+            printf("Error while opening the file %s!\n", files[i]);
+            return 1;
+        }
+
+        fclose(file);
+        *counts[i] = 0;
+    }
+
+    return 0;
+}

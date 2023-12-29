@@ -33,10 +33,11 @@ int Display()
 
     while (true)
     {
+        start:
         if (isLoggedIn && (instanceof <Admin>(account)))
         {
 
-            printf("\n--------- Welcome Admin ---------\n", account->getUserName());
+            printf("\n--------- Welcome Admin %s ---------\n", account->getUserName().c_str());
 
             int choice;
 
@@ -69,29 +70,55 @@ int Display()
             cout << "\nSelect an option : ";
 
             cin >> choice;
+            switch (choice)
+            {
+            case 1:
+                
+                break;
+            case 16:
+                isLoggedIn = 0;
+            break;
+            
+            default:
+                break;
+            }
         }
         else if (isLoggedIn && (instanceof <Patient>(account)))
         {
 
-            printf("\n--------- Welcome Doctor ---------\n", account->getUserName());
+            printf("\n--------- Welcome Patient %s ---------\n", account->getUserName().c_str());
 
             int choice;
 
-            cout << "\n1- Show doctor information\n";
-            cout << "2- Update doctor information\n";
+            cout << "\n1- Show patient information\n";
+            cout << "2- Update patient information\n";
+            cout << "2- Create  an appointment\n";
             cout << "3- Delete an appointment\n";
             cout << "4- View your appointments\n";
             cout << "5- Delete your account\n";
-            cout << "6- Delete User Account" << endl;
-            cout << "7- Logout" << endl;
+            cout << "6- Logout" << endl;
 
             cout << "Enter your choice: ";
             cin >> choice;
+
+            switch (choice)
+            {
+            case 1:
+                /* code */
+                break;
+            case 6:
+                isLoggedIn=0;
+                break;
+            
+            default:
+                break;
+            }
         }
         else if (isLoggedIn && (instanceof <Doctor>(account)))
         {
 
-            printf("\n--------- Welcome Admin ---------\n", account->getUserName());
+            printf("\n--------- Welcome Doctor %s ---------\n", account->getUserName().c_str());
+
 
             int choice;
 
@@ -101,10 +128,21 @@ int Display()
             cout << "4- View your appointments\n";
             cout << "5- Delete your account\n";
             cout << "6- Logout\n";
-            cout << "7- Delete User Account" << endl;
 
             cout << "Enter your choice: ";
             cin >> choice;
+            switch (choice)
+            {
+            case 1:
+                /* code */
+                break;
+            case 6:
+                isLoggedIn=0;
+                break;
+            
+            default:
+                break;
+            }
         }
         else
         {
@@ -118,10 +156,12 @@ int Display()
             cout << "\nSelect an option: ";
             cin >> option;
 
-            // cin.ignore(numeric_limits<streamsize>::max(), '\n');
-
             string username;
             string password;
+            string specialization;
+            string phoneNumber;
+            string gender;
+
             switch (option)
             {
             case 1:
@@ -146,21 +186,63 @@ int Display()
                 break;
 
             case 2:
-/*
-                cout << "Enter your username: ";
-                getline(cin, username);
+                cout << "Enter type for register:"<<endl;
+                cout << "1- Doctor\n";
+                cout << "2- Patient\n";
+                cout << "3- Exit\n";
 
-                cout << "Enter your password: ";
-                getline(cin, password);
+                int option;
+                cin>> option;
 
-                account = new User(Database::userID, name, username, password, mail, 0);
-                cout << "\nAccount created successfully!\n\n";
-                Database::userID++;
-                isLoggedIn = true;
+                switch (option)
+                {
+                case 1:
+                    cout << "Enter your username: ";
+                    cin>> username;
+
+                    cout << "Enter your specialization: ";
+                    cin>> specialization;
+
+                    cout << "Enter your phoneNumber: ";
+                    cin>> phoneNumber;
+
+                    cout << "Enter your password: ";
+                    cin>> password;
+
+                    account = new Doctor(Database::doctorID, username, specialization, phoneNumber, password);
+                    cout << "\nAccount created successfully!\n\n";
+                    Database::doctorID++;
+                    isLoggedIn = true;
+                    goto start;
+                case 2:
+                    cout << "Enter your username: ";
+                    cin>> username;
+
+                    cout << "Enter your phoneNumber: ";
+                    cin>> phoneNumber;
+
+                    cout << "Enter your gender: ";
+                    cin>> gender;
+
+                    cout << "Enter your password: ";
+                    cin>> password;
+
+                    account = new Patient(Database::patientID, username, phoneNumber, gender, password);
+                    cout << "\nAccount created successfully!\n\n";
+                    Database::patientID++;
+                    isLoggedIn = true;
+                    goto start;
+                case 3:
+                    return 0;
+                default:
+                    cout<<"invalid option, try again";
+                    break;
+                }
                 break;
-*/
+
             case 3:
                 cout << "\n------------ Goodbye! ------------\n";
+                Database::deleteAllData();
                 return 0;
 
             default:

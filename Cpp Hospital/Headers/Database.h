@@ -65,6 +65,7 @@ public:
     static Patient* findPatientById(int id);
 
     static void setAllIdNumbers();
+    static int deleteAllData();
     
     
 

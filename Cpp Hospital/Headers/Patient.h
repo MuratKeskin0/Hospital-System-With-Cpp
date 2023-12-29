@@ -6,7 +6,7 @@
 
 class Patient : public Person {
 public:
-    Patient(int id, const std::string& username, const std::string& phoneNumber, const std::string& gender, const std::string& password,const int &isAdmin);
+    Patient(int id, const std::string& username, const std::string& phoneNumber, const std::string& gender, const std::string& password);
      
     Patient();
     virtual ~Patient() override{}

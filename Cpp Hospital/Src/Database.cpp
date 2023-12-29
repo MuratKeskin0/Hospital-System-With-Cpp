@@ -13,6 +13,10 @@ vector<Person *> Database::doctors;
     int Database::doctorCount = 0;
     int Database::doctorID = 0;
 
+vector<Person *> Database::admins;
+    int Database::adminCount = 0;
+    int Database::adminID = 0;
+
 vector<Appointment *> Database::appointments;
     int Database::appointmentCount = 0;
     int Database::appointmentID = 0;
@@ -50,6 +54,18 @@ Person *Database::login(const string &username, const string &password)
         }
     }
 
+     for (Person* person : admins) {
+        if (person->getUserName() == username && person->getPassword() == password) {
+            if (instanceof<Admin>(person)) {
+                cout << "Admin logged in: " << person->getUserName() << endl;
+                // Additional admin-specific logic
+            }
+            return person;
+        }
+    }
+
+
+
     // If no match found
     return nullptr;
 }
@@ -71,8 +87,7 @@ void Database::insertPerson(const Person& person) {
                  << actualPatient.getUserName() << '\n'
                  << actualPatient.getPhoneNumber() << '\n'
                  << actualPatient.getGender() << '\n'
-                 << actualPatient.getPassword() << '\n'
-                 << checkAdmin(const_cast<Patient*>(&actualPatient)) << '\n';
+                 << actualPatient.getPassword() << '\n';
 
             patientCount++;
             std::cout << "Patient has been written to the file successfully." << std::endl;
@@ -105,12 +120,35 @@ void Database::insertPerson(const Person& person) {
         }
 
         file.close();
-    } else {
+    } 
+    else if (instanceof<Admin>(&person)) {
+        std::ofstream file("../txtFiles/admin.txt", std::ios_base::app);
+
+        if (!file.is_open()) {
+            std::cerr << "Error: Unable to open the file." << std::endl;
+            return;
+        }
+
+        try {
+            // Dynamic cast to check if it's actually a Patient and access Patient-specific fields
+            const Admin& actualAdmin = dynamic_cast<const Admin&>(person);
+
+            file << actualAdmin.getId() << '\n'
+                 << actualAdmin.getUserName() << '\n'
+                 << actualAdmin.getPassword() << '\n';
+
+            adminCount++;
+            std::cout << "Admin has been written to the file successfully." << std::endl;
+        } catch (const std::bad_cast&) {
+            std::cerr << "Error: Provided person is not a patient." << std::endl;
+        }
+
+        file.close();
+        }else {
         // Handle unknown person type
         std::cerr << "Error: Unknown type of person." << std::endl;
     }
 }
-
 
 //Patient
 /*void Database::insertPatient(const Person& patient) {
@@ -140,6 +178,41 @@ void Database::insertPerson(const Person& person) {
 
     file.close();
 }*/
+
+int Database::readAdmin(){
+        ifstream file("../txtFiles/admin.txt");
+    if (!file.is_open()) {
+        cerr << "Error while opening the file!" << endl;
+        return -1;
+    }
+
+    char chunk[128];
+    int lineNum = 0;
+    Admin *admin = nullptr;
+    int adminCount = 0;
+
+    while (file.getline(chunk, sizeof(chunk))) {
+        int newline_pos = strcspn(chunk, "\n");
+        chunk[newline_pos] = '\0';
+
+        if (lineNum % 3 == 0) {
+            admin = new Admin;
+            admin->setId(atoi(chunk));
+            lineNum++;
+        } else if (lineNum % 3 == 1) {
+            admin->setUserName(chunk);
+        } else if (lineNum % 3 == 2) {
+            admin->setPassword(chunk);
+            lineNum++;
+            admins.push_back(admin);
+            adminCount++;
+        }
+    }
+
+    adminCount = adminCount;
+    file.close();
+    return 0;
+}
 
 int Database::readPatient() {
     ifstream file("../txtFiles/patient.txt");

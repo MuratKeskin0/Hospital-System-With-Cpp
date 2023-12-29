@@ -2,8 +2,8 @@
 #include "../Headers/Database.h"
 
 // Constructor
-Doctor::Doctor(int id, const std::string& username, const std::string& specialization, const std::string& phoneNumber, const std::string& password,const int &isAdmin)
-    : Person(id, username, password,0), specialization(specialization), phoneNumber(phoneNumber) {
+Doctor::Doctor(int id, const std::string& username, const std::string& specialization, const std::string& phoneNumber, const std::string& password)
+    : Person(id, username, password), specialization(specialization), phoneNumber(phoneNumber) {
     Database::doctors.push_back(this);
     Database::insertPerson(*this);
 }

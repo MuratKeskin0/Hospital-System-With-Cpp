@@ -1,8 +1,8 @@
 #include "../Headers/Person.h"
 
 // Constructor
-Person::Person(int id, const std::string &username, const std::string &password, const int &isAdmin)
-    : id(id), username(username), password(password), isAdmin(isAdmin)
+Person::Person(int id, const std::string &username, const std::string &password)
+    : id(id), username(username), password(password)
 {
     
 }
@@ -13,7 +13,7 @@ Person::Person()
 {
 }
 
-int checkAdmin(Person *person) // friend function
+/*int checkAdmin(Person *person) // friend function
 {
     if (person->isAdmin == 1 || person->getId() == 0)
     {
@@ -22,7 +22,7 @@ int checkAdmin(Person *person) // friend function
     }
     person->isAdmin = 0;
     return 0;
-}
+}*/
 
 // Getters
 int Person::getId() const

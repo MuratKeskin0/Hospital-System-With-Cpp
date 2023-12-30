@@ -67,3 +67,5 @@ void Appointment::setDate(const std::string& newDate) {
 void Appointment::setIsConfirmed(bool newIsConfirmed) {
     isConfirmed = newIsConfirmed;
 }
+
+

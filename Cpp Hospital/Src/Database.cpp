@@ -150,35 +150,6 @@ void Database::insertPerson(const Person& person) {
     }
 }
 
-//Patient
-/*void Database::insertPatient(const Person& patient) {
-    std::ofstream file("../txtFiles/patient.txt", std::ios_base::app);
-
-    if (!file.is_open()) {
-        std::cerr << "Error: Unable to open the file." << std::endl;
-        return;
-    }
-
-    try {
-        // Dynamic cast to check if it's actually a Patient and access Patient-specific fields
-        const Patient& actualPatient = dynamic_cast<const Patient&>(patient);
-
-        file << actualPatient.getId() << '\n'
-             << actualPatient.getUserName() << '\n'
-             << actualPatient.getPhoneNumber() << '\n'
-             << actualPatient.getGender() << '\n'
-             << actualPatient.getPassword() << '\n'
-             << checkAdmin(const_cast<Patient*>(&actualPatient)) << '\n';
-
-        patientCount++;
-        std::cout << "Patient has been written to the file successfully." << std::endl;
-    } catch (const std::bad_cast&) {
-        std::cerr << "Error: Provided person is not a patient." << std::endl;
-    }
-
-    file.close();
-}*/
-
 int Database::readAdmin(){
         ifstream file("../txtFiles/admin.txt");
     if (!file.is_open()) {
@@ -215,6 +186,11 @@ int Database::readAdmin(){
 }
 
 int Database::readPatient() {
+    // Clear existing patients to avoid duplicates
+    for (auto& patient : patients) {
+        delete patient;  // Assuming patients were dynamically allocated
+    }
+    patients.clear();
     ifstream file("../txtFiles/patient.txt");
     if (!file.is_open()) {
         cerr << "Error while opening the file!" << endl;
@@ -367,34 +343,12 @@ void Database::showAllPatients() {
     }
 }
 
-//Doctor
-/*void Database::insertDoctor(const Person& doctor) {
-    std::ofstream file("../txtFiles/doctor.txt", std::ios_base::app);
-
-    if (!file.is_open()) {
-        std::cerr << "Error: Unable to open the file." << std::endl;
-        return;
-    }
-
-    try {
-        const Doctor& actualDoctor = dynamic_cast<const Doctor&>(doctor);
-
-        file << actualDoctor.getId() << '\n'
-             << actualDoctor.getUserName() << '\n'
-             << actualDoctor.getSpecialization() << '\n'
-             << actualDoctor.getPhoneNumber() << '\n'
-             << actualDoctor.getPassword() << '\n';
-
-        doctorCount++;
-        std::cout << "Doctor has been written to the file successfully." << std::endl;
-    } catch (const std::bad_cast&) {
-        std::cerr << "Error: Provided person is not a doctor." << std::endl;
-    }
-
-    file.close();
-}*/
-
 int Database::readDoctor() {
+    // Clear existing patients to avoid duplicates
+    for (auto& doctor : doctors) {
+        delete doctor;  // Assuming patients were dynamically allocated
+    }
+    doctors.clear();
     std::ifstream file("../txtFiles/doctor.txt");
     if (!file.is_open()) {
         std::cerr << "Error while opening the file!" << std::endl;
@@ -572,24 +526,37 @@ int Database::updateDoctorInformation(int id, const std::string& newUsername, co
 
 //Appointment
 void Database::insertAppointment(const Appointment &appointment) {
-    std::ofstream file("../database/appointment.txt", std::ios::app);
+    std::ofstream file("../txtFiles/appointment.txt", std::ios::app);
 
     if (!file) {
-        std::cerr << "Error while opening the file!" << std::endl;
+        std::cerr << "Error while opening the appointment file for writing." << std::endl;
         return;
     }
 
-    file << appointment.getId() << '\n'
-         << appointment.getPatient().getId() << '\n'
-         << appointment.getDoctor().getId() << '\n'
-         << static_cast<int>(appointment.getType()) << '\n'
-         << appointment.getDate() << '\n'
-         << appointment.getIsConfirmed() << '\n';
+    try {
+        file << appointment.getId() << '\n'
+             << appointment.getPatient().getId() << '\n'
+             << appointment.getDoctor().getId() << '\n'
+             << static_cast<int>(appointment.getType()) << '\n'
+             << appointment.getDate() << '\n'
+             << appointment.getIsConfirmed() << '\n';
+
+        if (!file.good()) {
+            throw std::runtime_error("Failed to write to the appointment file.");
+        }
+    } catch (const std::exception& e) {
+        std::cerr << "Error: " << e.what() << std::endl;
+    }
 
     file.close();
 }
 
 int Database::readAppointment() {
+     // Clear existing patients to avoid duplicates
+    for (auto& appointment : appointments) {
+        delete appointment;  // Assuming patients were dynamically allocated
+    }
+    appointments.clear();
     std::ifstream file("../database/appointment.txt");
     if (!file) {
         std::cerr << "Error while opening the file!" << std::endl;
@@ -627,8 +594,8 @@ void Database::showAllAppointments() {
     std::cout << "\n--------------- ALL APPOINTMENTS ---------------\n\n";
     for (const Appointment* appointment : appointments) {
         std::cout << "Appointment ID: " << appointment->getId() << std::endl
-                  << "Doctor ID: " << appointment->getDoctor().getId() << std::endl
-                  << "Patient ID: " << appointment->getPatient().getId() << std::endl
+                  << "Doctor ID: " << appointment->getDoctor().getUserName() << std::endl
+                  << "Patient ID: " << appointment->getPatient().getUserName() << std::endl
                   << "Type: " << static_cast<int>(appointment->getType()) << std::endl
                   << "Date: " << appointment->getDate() << std::endl
                   << "Confirmed: " << (appointment->getIsConfirmed() ? "Yes" : "No") << std::endl

@@ -30,6 +30,10 @@ public:
     bool getIsConfirmed() const;
     void setIsConfirmed(bool newIsConfirmed);
 
+    
+
+    
+
 private:
     int id;
     Type type;

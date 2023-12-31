@@ -67,6 +67,8 @@ public:
     static bool usernameExists(const string &username);
     static void setAllIdNumbers();
     static int deleteAllData();
+    static int deleteAdmin(int id);
+    static void showPersonInformation(int id);
     
     
 

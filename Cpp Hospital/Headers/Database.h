@@ -63,6 +63,7 @@ public:
     static int getTotalNumberOfAppointments();
     static Doctor* findDoctorById(int id);
     static Patient* findPatientById(int id);
+    static Appointment* findAppointmentById(int id);
 
     static void setAllIdNumbers();
     static int deleteAllData();

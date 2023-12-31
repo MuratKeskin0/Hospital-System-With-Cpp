@@ -112,10 +112,10 @@ int Display()
 
                 // Check if there's already an appointment with the same doctor on the same date
                 bool appointmentExists = std::any_of(Database::appointments.begin(), Database::appointments.end(),
-                                                     [&doctorId, &date](const Appointment *appointment)
-                                                     {
-                                                         return appointment->getDoctor().getId() == doctorId && appointment->getDate() == date;
-                                                     });
+                [&doctorId, &date](const Appointment *appointment)
+                {
+                     return appointment->getDoctor().getId() == doctorId && appointment->getDate() == date;
+                });
 
                 if (appointmentExists)
                 {
@@ -147,8 +147,96 @@ int Display()
                 break;
 
             case 3:
+            {
+                int appointmentId;
                 Database::showAllAppointments();
-                break;
+                cout << "Enter Appointment ID to update: ";
+                cin >> appointmentId;
+
+                // Validate appointment ID
+                Appointment *existingAppointment = Database::findAppointmentById(appointmentId);
+                if (!existingAppointment)
+                {
+                    cout << "No appointment found with ID " << appointmentId << "!" << endl;
+                    break;
+                }
+
+                // Gather new details for the appointment
+                int newDoctorId, newPatientId, newTypeInt;
+                string newDate;
+
+                 Database::showAllDoctors();
+                cout << "Enter new Doctor ID: ";
+                cin >> newDoctorId;
+                if (cin.fail())
+                {
+                    cin.clear();
+                    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                    cout << "Invalid input. Please enter a number." << endl;
+                    break;  // Exit the function or handle the error appropriately
+                }
+
+                Doctor *newDoctor = Database::findDoctorById(newDoctorId);
+                if (!newDoctor)
+                {
+                    cout << "Doctor with ID " << newDoctorId << " not found." << endl;
+                    break; // Exit the function or handle the error appropriately
+                }
+
+
+                Database::showAllPatients();
+                cout << "Enter new Patient ID: ";
+                cin >> newPatientId;
+                if (cin.fail())
+                {
+                    cin.clear();
+                    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                    cout << "Invalid input. Please enter a number." << endl;
+                    break; // Exit the function or handle the error appropriately
+                }
+
+                Patient *newPatient = Database::findPatientById(newPatientId);
+                if (!newPatient)
+                {
+                    cout << "Patient with ID " << newPatientId << " not found." << endl;
+                    break; // Exit the function or handle the error appropriately
+                }
+
+                cout << "Enter new Appointment Date (e.g., 2023-12-31): ";
+                cin >> newDate;
+                
+                 bool appointmentExists = std::any_of(Database::appointments.begin(), Database::appointments.end(),
+                [&newDoctorId, &newDate](const Appointment *appointment)
+                {
+                     return appointment->getDoctor().getId() == newDoctorId && appointment->getDate() == newDate;
+                });
+
+                if (appointmentExists)
+                {
+                    cout << "An appointment with this doctor on the specified date already exists." << endl;
+                    break;
+                }
+
+
+                cout << "Enter new Appointment Type (0 for General, 1 for Emergency, etc.): ";
+                cin >> newTypeInt;
+                if (cin.fail() || newTypeInt < 0 || newTypeInt > 1)
+                {
+                    cin.clear();
+                    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                    cout << "Invalid appointment type entered." << endl;
+                    break; // Exit the function or handle the error appropriately
+                }
+
+                // Update the appointment details
+                existingAppointment->setDoctor(*Database::findDoctorById(newDoctorId));
+                existingAppointment->setPatient(*Database::findPatientById(newPatientId));
+                existingAppointment->setDate(newDate);
+                existingAppointment->setType(static_cast<Appointment::Type>(newTypeInt));
+
+                cout << "Appointment updated successfully with ID " << existingAppointment->getId() << "!" << endl;
+            }
+            break;
 
             case 16:
                 isLoggedIn = 0;

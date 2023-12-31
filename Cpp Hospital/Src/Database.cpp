@@ -720,6 +720,15 @@ Patient* Database::findPatientById(int id) {
     return nullptr; // Return nullptr if not found
 }
 
+Appointment* Database::findAppointmentById(int id) {
+    for (auto& appointment : appointments) {
+        if (appointment->getId() == id) {
+            return appointment; // Found the appointment with the given ID
+        }
+    }
+    return nullptr; // No appointment found with the given ID
+}
+
 int Database::deleteAppointmentsByDoctor(int doctorId) {
     int deletedCount = 0;
     auto it = appointments.begin();

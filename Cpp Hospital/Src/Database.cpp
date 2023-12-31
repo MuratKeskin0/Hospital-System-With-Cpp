@@ -553,10 +553,11 @@ void Database::insertAppointment(const Appointment &appointment) {
 
 int Database::readAppointment() {
      // Clear existing patients to avoid duplicates
-    for (auto& appointment : appointments) {
+    /*for (auto& appointment : appointments) {
         delete appointment;  // Assuming patients were dynamically allocated
     }
-    appointments.clear();
+    appointments.clear();*/
+
     std::ifstream file("../database/appointment.txt");
     if (!file) {
         std::cerr << "Error while opening the file!" << std::endl;
@@ -616,8 +617,8 @@ void Database::deleteAppointment(int appointmentID) {
     delete *it;
     appointments.erase(it);
 
-    std::ifstream file("../database/appointment.txt");
-    std::ofstream temp("../database/temp.txt");
+    std::ifstream file("../txtFiles/appointment.txt");
+    std::ofstream temp("../txtFiles/temp.txt");
 
     if (!file.is_open() || !temp.is_open()) {
         std::cout << "Error while opening the file!" << std::endl;
@@ -642,8 +643,8 @@ void Database::deleteAppointment(int appointmentID) {
     file.close();
     temp.close();
 
-    std::remove("../database/appointment.txt");
-    std::rename("../database/temp.txt", "../database/appointment.txt");
+    std::remove("../txtFiles/appointment.txt");
+    std::rename("../txtFiles/temp.txt", "../txtFiles/appointment.txt");
 
     std::cout << "Appointment with ID " << appointmentID << " has been deleted successfully." << std::endl;
 }
@@ -940,4 +941,30 @@ int Database::deleteAllData()
     }
 
     return 0;
+}
+
+bool Database::usernameExists(const string &username) {
+    // Check among patients
+    for (const auto& patient : patients) {
+        if (dynamic_cast<Patient*>(patient)->getUserName() == username) {
+            return true;
+        }
+    }
+
+    // Check among doctors
+    for (const auto& doctor : doctors) {
+        if (dynamic_cast<Doctor*>(doctor)->getUserName() == username) {
+            return true;
+        }
+    }
+
+    // Check among admins
+    for (const auto& admin : admins) {
+        if (dynamic_cast<Admin*>(admin)->getUserName() == username) {
+            return true;
+        }
+    }
+
+    // If username not found
+    return false;
 }

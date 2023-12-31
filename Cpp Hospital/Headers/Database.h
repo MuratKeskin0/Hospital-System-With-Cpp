@@ -64,7 +64,7 @@ public:
     static Doctor* findDoctorById(int id);
     static Patient* findPatientById(int id);
     static Appointment* findAppointmentById(int id);
-
+    static bool usernameExists(const string &username);
     static void setAllIdNumbers();
     static int deleteAllData();
     

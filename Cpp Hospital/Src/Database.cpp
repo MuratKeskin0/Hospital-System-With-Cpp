@@ -1355,37 +1355,56 @@ bool Database::usernameExists(const string &username)
     return false;
 }
 
-void Database::showPersonInformation(int id)
-{
-    // Attempt to find the person as a patient, doctor, or admin
-    Patient* patient = findPatientById(id);
-    Doctor* doctor = findDoctorById(id);
-    Admin* admin = nullptr;
-
-    // Check among admins
-    auto adminIt = std::find_if(admins.begin(), admins.end(), [id](const Person* person) {
-        return person->getId() == id;
-    });
-
-    if (adminIt != admins.end()) {
-        admin = dynamic_cast<Admin*>(*adminIt);
+void Database::showPersonInformation(const Person *person, int id) {
+    if (person == nullptr) {
+        cout << "No person found with ID " << id << "." << endl;
+        return;
     }
 
-    // Display information based on the type of person found
-    if (patient != nullptr) {
-        std::cout << "Patient ID: " << patient->getId() << std::endl;
-        std::cout << "Username: " << patient->getUserName() << std::endl;
-        std::cout << "Phone Number: " << patient->getPhoneNumber() << std::endl;
-        std::cout << "Gender: " << patient->getGender() << std::endl;
-    } else if (doctor != nullptr) {
-        std::cout << "Doctor ID: " << doctor->getId() << std::endl;
-        std::cout << "Username: " << doctor->getUserName() << std::endl;
-        std::cout << "Specialization: " << doctor->getSpecialization() << std::endl;
-        std::cout << "Phone Number: " << doctor->getPhoneNumber() << std::endl;
-    } else if (admin != nullptr) {
-        std::cout << "Admin ID: " << admin->getId() << std::endl;
-        std::cout << "Username: " << admin->getUserName() << std::endl;
+    string filename;
+    vector<string> propertyLabels;
+
+    // Determine the file and labels based on the person type
+    if (instanceof<Patient>(person)) {
+        filename = "../txtFiles/patient.txt";
+        propertyLabels = {"ID: ", "Username: ", "Phone Number: ", "Gender: ", "Password: "};
+    } else if (instanceof<Doctor>(person)) {
+        filename = "../txtFiles/doctor.txt";
+        propertyLabels = {"ID: ", "Username: ", "Specialization: ", "Phone Number: ", "Password: "};
+    } else if (instanceof<Admin>(person)) {
+        filename = "../txtFiles/admin.txt";
+        propertyLabels = {"ID: ", "Username: ", "Password: "};
     } else {
-        std::cout << "No person found with ID " << id << "." << std::endl;
+        cout << "Unknown person type." << endl;
+        return;
     }
+
+    ifstream file(filename);
+    if (!file.is_open()) {
+        cerr << "Error while opening the file: " << filename << endl;
+        return;
+    }
+
+    string line;
+    vector<string> details;
+    while (getline(file, line)) {
+        details.push_back(line);
+        if (details.size() == propertyLabels.size()) {
+            if (stoi(details[0]) == id) {
+                // Display the person's information
+                for (size_t i = 0; i < details.size(); ++i) {
+                    cout << propertyLabels[i] << details[i] << endl;
+                }
+                file.close();
+                return;
+            }
+            details.clear();
+        }
+    }
+
+    cout << "No person found with ID " << id << " in file " << filename << "." << endl;
+    file.close();
 }
+
+
+

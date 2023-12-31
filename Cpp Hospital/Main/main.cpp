@@ -61,6 +61,14 @@ int Display()
             cout << "\nSelect an option : ";
 
             cin >> choice;
+
+            if (cin.fail())
+            {
+                cin.clear();                                                   // Clear the error state of cin
+                cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Ignore the rest of the line
+                cout << "Invalid input for Doctor ID. Please enter a number." << endl;
+                break;
+            }
             switch (choice)
             {
             case 1:
@@ -589,11 +597,19 @@ int Display()
             cout << "Enter your choice: ";
             cin >> choice;
 
+            if (cin.fail())
+            {
+                cin.clear();                                                   // Clear the error state of cin
+                cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Ignore the rest of the line
+                cout << "Invalid input for Doctor ID. Please enter a number." << endl;
+                break;
+            }
+
             switch (choice)
             {
             case 1:
                 cout << "Patient's information" << endl;
-                Database::showPersonInformation(account->getId());
+                Database::showPersonInformation(account, account->getId());
                 break;
             case 2:
             {
@@ -639,7 +655,7 @@ int Display()
             }
             break;
             case 3:
-                {
+            {
                 int doctorId, typeInt;
                 string date;
 
@@ -690,14 +706,14 @@ int Display()
                 Appointment::Type type = static_cast<Appointment::Type>(typeInt);
 
                 // Create the Appointment object
-                Appointment *newAppointment = new Appointment(Database::appointmentID++, type, *doctor, *dynamic_cast<Patient*>(account), date, false);
+                Appointment *newAppointment = new Appointment(Database::appointmentID++, type, *doctor, *dynamic_cast<Patient *>(account), date, false);
 
                 cout << "Appointment created successfully with ID " << newAppointment->getId() << "!" << endl;
             }
 
             break;
             case 4:
-                {
+            {
                 int appointmentId;
                 Database::showAppointmentsByPatient(account->getId());
                 cout << "Enter Appointment ID to delete: ";
@@ -722,19 +738,28 @@ int Display()
                 Database::deleteAppointment(appointmentId);
                 break;
             }
-                break;
+            break;
             case 5:
                 Database::showAppointmentsByPatient(account->getId());
                 break;
             case 6:
+                Database::deleteAppointmentsByPatient(account->getId());
                 Database::deletePatient(account->getId());
-                isLoggedIn=0;
+                isLoggedIn = 0;
                 break;
             case 7:
                 isLoggedIn = 0;
                 break;
 
             default:
+                cout << "invalid choice" << endl;
+                if (cin.fail())
+                {
+                    cin.clear();                                                   // Clear the error state of cin
+                    cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Ignore the rest of the line
+                    cout << "Invalid input for Doctor ID. Please enter a number." << endl;
+                    break;
+                }
                 break;
             }
         }
@@ -755,12 +780,126 @@ int Display()
 
             cout << "Enter your choice: ";
             cin >> choice;
+
+            if (cin.fail())
+            {
+                cin.clear();                                                   // Clear the error state of cin
+                cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Ignore the rest of the line
+                cout << "Invalid input for Doctor ID. Please enter a number." << endl;
+                break;
+            }
             switch (choice)
             {
             case 1:
-                /* code */
+                Database::showPersonInformation(account, account->getId());
                 break;
+            case 2:
+            {
+                // Validate doctor ID
+                Doctor *existingDoctor = Database::findDoctorById(account->getId());
+                if (!existingDoctor)
+                {
+                    cout << "No doctor found with ID " << account->getId() << "!" << endl;
+                    break;
+                }
+
+                // Gather new details for the doctor
+                string newUsername, newSpecialization, newPhoneNumber, newPassword;
+
+                cout << "Enter new Username (leave blank to keep existing): ";
+                cin >> newUsername;
+                if (!newUsername.empty() && Database::usernameExists(newUsername))
+                {
+                    cout << "Username already exists. Please choose a different one." << endl;
+                    break;
+                }
+                if (newUsername.empty())
+                    newUsername = existingDoctor->getUserName();
+
+                cout << "Enter new Specialization (leave blank to keep existing): ";
+                cin >> newSpecialization;
+                if (newSpecialization.empty())
+                    newSpecialization = existingDoctor->getSpecialization();
+
+                cout << "Enter new Phone Number (leave blank to keep existing): ";
+                cin >> newPhoneNumber;
+                if (newPhoneNumber.empty())
+                    newPhoneNumber = existingDoctor->getPhoneNumber();
+
+                cout << "Enter new Password (leave blank to keep existing): ";
+                cin >> newPassword;
+                if (newPassword.empty())
+                    newPassword = existingDoctor->getPassword();
+
+                // Update the doctor's details
+                Database::updateDoctorInformation(account->getId(), newUsername, newSpecialization, newPhoneNumber, newPassword);
+                cout << "Doctor information updated successfully." << endl;
+            }
+            break;
+            case 3:
+            {
+                int appointmentId;
+                Database::showAllAppointmentsByDoctor(account->getId());
+                cout << "Enter Appointment ID to delete: ";
+                cin >> appointmentId;
+
+                if (cin.fail())
+                {
+                    cin.clear();
+                    cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+                    cout << "Invalid input for Doctor ID. Please enter a number." << endl;
+                    break;
+                }
+
+                Appointment *appointment = Database::findAppointmentById(appointmentId);
+
+                if (!appointment)
+                {
+                    cout << "No appointment found with ID " << appointmentId << "!" << endl;
+                    break;
+                }
+
+                Database::deleteAppointment(appointmentId);
+                break;
+            }
+            break;
+            case 4:
+                Database::showAllAppointmentsByDoctor(account->getId());
+                break;
+            case 5:
+            {
+                int appointmentId;
+                Database::showAllAppointmentsByDoctor(account->getId());
+                cout << "Enter the Appointment ID to change status: ";
+                cin >> appointmentId;
+
+                if (cin.fail())
+                {
+                    cin.clear();                                                   // Clear the error state of cin
+                    cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Ignore the rest of the line
+                    cout << "Invalid input. Please enter a number." << endl;
+                    break;
+                }
+
+                // Check if the appointment belongs to this doctor
+                Appointment *appointment = Database::findAppointmentById(appointmentId);
+                if (appointment == nullptr || appointment->getDoctor().getId() != account->getId())
+                {
+                    cout << "Appointment with ID " << appointmentId << " not found or does not belong to you." << endl;
+                    break;
+                }
+
+                Database::changeConfirmationStatus(appointmentId);
+                cout << "Appointment status changed successfully." << endl;
+            }
+            break;
+
             case 6:
+                Database::deleteAppointmentsByDoctor(account->getId());
+                Database::deleteDoctor(account->getId());
+                isLoggedIn = 0;
+                break;
+            case 7:
                 isLoggedIn = 0;
                 break;
 
@@ -779,6 +918,14 @@ int Display()
 
             cout << "\nSelect an option: ";
             cin >> option;
+
+            if (cin.fail())
+            {
+                cin.clear();                                                   // Clear the error state of cin
+                cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Ignore the rest of the line
+                cout << "Invalid input for Doctor ID. Please enter a number." << endl;
+                break;
+            }
 
             string username;
             string password;
@@ -818,48 +965,103 @@ int Display()
                 int option;
                 cin >> option;
 
+                if (cin.fail())
+                {
+                    cin.clear();                                                   // Clear the error state of cin
+                    cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Ignore the rest of the line
+                    cout << "Invalid input for Doctor ID. Please enter a number." << endl;
+                    break;
+                }
+
                 switch (option)
                 {
                 case 1:
-                    cout << "Enter your username: ";
-                    cin >> username;
+                {
+                    string username, specialization, phoneNumber, password;
 
-                    cout << "Enter your specialization: ";
+                    cout << "Enter Doctor's Username: ";
+                    cin >> username;
+                    if (username.empty() || Database::usernameExists(username))
+                    {
+                        cout << "Invalid or existing username. Please try again." << endl;
+                        break;
+                    }
+
+                    cout << "Enter Doctor's Specialization: ";
                     cin >> specialization;
+                    if (specialization.empty())
+                    {
+                        cout << "Specialization cannot be empty. Please try again." << endl;
+                        break;
+                    }
 
-                    cout << "Enter your phoneNumber: ";
+                    cout << "Enter Doctor's Phone Number: ";
                     cin >> phoneNumber;
+                    if (cin.fail())
+                    {
+                        cin.clear();                                                   // Clear the error state of cin
+                        cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Ignore the rest of the line
+                        cout << "Invalid input for phoneNumber. Please enter a number." << endl;
+                        break;
+                    }
 
-                    cout << "Enter your password: ";
+                    cout << "Enter Doctor's Password: ";
                     cin >> password;
 
-                    account = new Doctor(Database::doctorID, username, specialization, phoneNumber, password);
-                    cout << "\nAccount created successfully!\n\n";
-                    Database::doctorID++;
+                    // Create a new Doctor instance
+                    Doctor *newDoctor = new Doctor(Database::doctorID++, username, specialization, phoneNumber, password);
+                    cout << "Doctor created successfully with ID " << newDoctor->getId() << "!" << endl;
                     isLoggedIn = true;
                     goto start;
+                }
                 case 2:
-                    cout << "Enter your username: ";
+                {
+                    string username, phoneNumber, gender, password;
+
+                    cout << "Enter Patient's Username: ";
                     cin >> username;
+                    if (username.empty() || Database::usernameExists(username))
+                    {
+                        cout << "Invalid or existing username. Please try again." << endl;
+                        break;
+                    }
 
-                    cout << "Enter your phoneNumber: ";
+                    cout << "Enter Patient's phoneNumber: ";
                     cin >> phoneNumber;
+                    if (phoneNumber.empty())
+                    {
+                        cout << "phoneNumber cannot be empty. Please try again." << endl;
+                        break;
+                    }
 
-                    cout << "Enter your gender: ";
+                    cout << "Enter Patient's Gender: ";
                     cin >> gender;
+                    if (gender.empty())
+                    {
+                        cout << "gender cannot be empty. Please try again." << endl;
+                        break;
+                    }
 
-                    cout << "Enter your password: ";
+                    cout << "Enter Patient's Password: ";
                     cin >> password;
+                    if (password.empty())
+                    {
+                        cout << "password cannot be empty. Please try again." << endl;
+                        break;
+                    }
 
-                    account = new Patient(Database::patientID, username, phoneNumber, gender, password);
-                    cout << "\nAccount created successfully!\n\n";
-                    Database::patientID++;
+                    // Create a new Patient instance
+                    Patient *newPatient = new Patient(Database::patientID++, username, phoneNumber, gender, password);
+                    cout << "Patient created successfully with ID " << newPatient->getId() << "!" << endl;
+
                     isLoggedIn = true;
                     goto start;
+                }
+
                 case 3:
-                    return 0;
+                    break;
                 default:
-                    cout << "invalid option, try again";
+                    cout << "invalid option, try again" << endl;
                     break;
                 }
                 break;
@@ -871,9 +1073,11 @@ int Display()
 
             default:
                 cout << "Invalid option. Please select 1, 2, or 3.\n";
+                break;
             }
         }
     }
+    return 0;
 }
 
 void defaultInformation()

@@ -55,3 +55,4 @@ void Person::setPassword(const std::string &password)
 {
     this->password = password;
 }
+

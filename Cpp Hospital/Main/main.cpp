@@ -39,7 +39,6 @@ int Display()
         {
 
             printf("\n--------- Welcome Admin %s ---------\n", account->getUserName().c_str());
-            
 
             int choice;
 
@@ -67,8 +66,7 @@ int Display()
             {
                 cin.clear();                                                   // Clear the error state of cin
                 cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Ignore the rest of the line
-                cout << "Invalid input for Doctor ID. Please enter a number." << endl;
-                break;
+                cout << "Invalid input for choice. Please enter a number." << endl;
             }
             switch (choice)
             {
@@ -602,8 +600,7 @@ int Display()
             {
                 cin.clear();                                                   // Clear the error state of cin
                 cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Ignore the rest of the line
-                cout << "Invalid input for Doctor ID. Please enter a number." << endl;
-                break;
+                cout << "Invalid input for choice. Please enter a number." << endl;
             }
 
             switch (choice)
@@ -786,8 +783,7 @@ int Display()
             {
                 cin.clear();                                                   // Clear the error state of cin
                 cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Ignore the rest of the line
-                cout << "Invalid input for Doctor ID. Please enter a number." << endl;
-                break;
+                cout << "Invalid input for choice. Please enter a number." << endl;
             }
             switch (choice)
             {
@@ -924,11 +920,10 @@ int Display()
             {
                 cin.clear();                                                   // Clear the error state of cin
                 cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Ignore the rest of the line
-                cout << "Invalid input for Doctor ID. Please enter a number." << endl;
-                break;
+                cout << "Invalid input for choice . Please enter a number." << endl;
             }
 
-            string username;
+            std::string username;
             string password;
             string specialization;
             string phoneNumber;
@@ -939,6 +934,12 @@ int Display()
             case 1:
                 cout << "\nEnter your username: " << endl;
                 cin >> username;
+
+                if (username.empty() || !(Database::usernameExists(username)) )
+                    {
+                        printf ("There is no someone who has %s username.", username, "\n");
+                        break;
+                    }
 
                 cout << "Enter your password: " << endl;
                 cin >> password;
@@ -958,20 +959,20 @@ int Display()
                 break;
 
             case 2:
-                cout << "Enter type for register:" << endl;
+                
                 cout << "1- Doctor\n";
                 cout << "2- Patient\n";
                 cout << "3- Exit\n";
 
                 int option;
+                cout << "Enter type for register:" << endl;
                 cin >> option;
 
                 if (cin.fail())
                 {
                     cin.clear();                                                   // Clear the error state of cin
                     cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Ignore the rest of the line
-                    cout << "Invalid input for Doctor ID. Please enter a number." << endl;
-                    break;
+                    cout << "Invalid input for choice . Please enter a number." << endl;
                 }
 
                 switch (option)
@@ -1073,7 +1074,7 @@ int Display()
                 return 0;
 
             default:
-                cout << "Invalid option. Please select 1, 2, or 3.\n";
+                cout << "Invalid option. try again.\n";
                 break;
             }
         }

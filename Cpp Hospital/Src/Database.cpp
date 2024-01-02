@@ -101,7 +101,7 @@ void Database::insertPerson(const Person &person)
                  << actualPatient.getPassword() << '\n';
 
             patientCount++;
-            std::cout << "Patient has been written to the file successfully." << std::endl;
+           // std::cout << "Patient has been written to the file successfully." << std::endl;
         }
         catch (const std::bad_cast &)
         {
@@ -131,7 +131,7 @@ void Database::insertPerson(const Person &person)
                  << actualDoctor.getPassword() << '\n';
 
             doctorCount++;
-            std::cout << "Doctor has been written to the file successfully." << std::endl;
+          //  std::cout << "Doctor has been written to the file successfully." << std::endl;
         }
         catch (const std::bad_cast &)
         {
@@ -160,7 +160,7 @@ void Database::insertPerson(const Person &person)
                  << actualAdmin.getPassword() << '\n';
 
             adminCount++;
-            std::cout << "Admin has been written to the file successfully." << std::endl;
+           // std::cout << "Admin has been written to the file successfully." << std::endl;
         }
         catch (const std::bad_cast &)
         {

@@ -19,8 +19,6 @@ public:
     void setUserName(const std::string& username);
     void setPassword(const std::string& password);
 
-   
-
 private:
     int id;
     std::string username;

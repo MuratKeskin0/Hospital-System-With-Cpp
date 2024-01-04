@@ -56,7 +56,8 @@ int Display()
             cout << "12- Delete Patient" << endl;
             cout << "13- Total Number of All Appointments" << endl;
             cout << "14- Change the statue of an Appointment" << endl;
-            cout << "15- Logout" << endl;
+            cout << "15- Ratio of number of patients per doctor" << endl;
+            cout << "16- Logout" << endl;
 
             cout << "\nSelect an option : ";
 
@@ -118,10 +119,10 @@ int Display()
 
                 // Check if there's already an appointment with the same doctor on the same date
                 bool appointmentExists = std::any_of(Database::appointments.begin(), Database::appointments.end(),
-                                                     [&doctorId, &date](const Appointment *appointment)
-                                                     {
-                                                         return appointment->getDoctor().getId() == doctorId && appointment->getDate() == date;
-                                                     });
+                [&doctorId, &date](const Appointment *appointment)
+                {
+                         return appointment->getDoctor().getId() == doctorId && appointment->getDate() == date;
+                    });
 
                 if (appointmentExists)
                 {
@@ -142,6 +143,7 @@ int Display()
 
                 // Create the Appointment object
                 Appointment *newAppointment = new Appointment(Database::appointmentID++, type, *doctor, *patient, date, false);
+                Database::addAppointment(*newAppointment);
 
                 cout << "Appointment created successfully with ID " << newAppointment->getId() << "!" << endl;
             }
@@ -571,6 +573,10 @@ int Display()
             break;
 
             case 15:
+                Database::showPatientDoctorRatio();
+                break;
+            
+            case 16:
                 isLoggedIn = 0;
                 break;
 
@@ -607,7 +613,7 @@ int Display()
             {
             case 1:
                 cout << "Patient's information" << endl;
-                Database::showPersonInformation(account, account->getId());
+                Database::showPersonInformation(account->getId());
                 break;
             case 2:
             {
@@ -705,6 +711,7 @@ int Display()
 
                 // Create the Appointment object
                 Appointment *newAppointment = new Appointment(Database::appointmentID++, type, *doctor, *dynamic_cast<Patient *>(account), date, false);
+                Database::addAppointment(*newAppointment);
 
                 cout << "Appointment created successfully with ID " << newAppointment->getId() << "!" << endl;
             }
@@ -788,7 +795,7 @@ int Display()
             switch (choice)
             {
             case 1:
-                Database::showPersonInformation(account, account->getId());
+                Database::showPersonInformation(account->getId());
                 break;
             case 2:
             {

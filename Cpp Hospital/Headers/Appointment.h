@@ -30,10 +30,8 @@ public:
     bool getIsConfirmed() const;
     void setIsConfirmed(bool newIsConfirmed);
 
+    friend std::ostream& operator<<(std::ostream& os, const Appointment& appointment);
     
-
-    
-
 private:
     int id;
     Type type;

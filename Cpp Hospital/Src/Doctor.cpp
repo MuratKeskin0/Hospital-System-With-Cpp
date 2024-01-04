@@ -29,3 +29,11 @@ std::string Doctor::getPhoneNumber() const {
 void Doctor::setPhoneNumber(const std::string& phoneNumber) {
     this->phoneNumber = phoneNumber;
 }
+
+// Overload of operator<< for Doctor
+std::ostream& operator<<(std::ostream& os, const Doctor& doctor) {
+    os << static_cast<const Person&>(doctor); // Call Person's operator<<
+    os << ", Specialization: " << doctor.getSpecialization() 
+       << ", Phone Number: " << doctor.getPhoneNumber();
+    return os;
+}

@@ -21,7 +21,8 @@ public:
     static int doctorCount;
     static int doctorID;
 
-    static vector<Person *> admins;
+    static const int MAX_ADMINS = 3; // Adjust this number as needed
+    static Person* admins[MAX_ADMINS];
     static int adminCount;
     static int adminID;
 
@@ -47,6 +48,7 @@ public:
     static int deleteDoctor(const int id);
     static int updateDoctorInformation(int id, const std::string& newUsername, const std::string& newSpecialization, const std::string& newPhoneNumber, const std::string& newPassword);
     // Function about appointment
+    static void addAppointment(const Appointment& appointment);
     static void insertAppointment(const Appointment &appointment);
     static int readAppointment();
     static void showAllAppointments();
@@ -68,7 +70,8 @@ public:
     static void setAllIdNumbers();
     static int deleteAllData();
     static int deleteAdmin(int id);
-    static void showPersonInformation(const Person *person,int id);
+    static void showPersonInformation(int id);
+    static void showPatientDoctorRatio();
     
     
 

@@ -56,3 +56,9 @@ void Person::setPassword(const std::string &password)
     this->password = password;
 }
 
+std::ostream& operator<<(std::ostream& os, const Person& person) {
+        os << "ID: " << person.getId() << ", Username: " << person.getUserName();
+        return os;
+    }
+
+

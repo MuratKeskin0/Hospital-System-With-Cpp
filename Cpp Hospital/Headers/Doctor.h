@@ -18,6 +18,8 @@ public:
     std::string getPhoneNumber() const;
     void setPhoneNumber(const std::string& phoneNumber);
 
+    friend std::ostream& operator<<(std::ostream& os, const Doctor& doctor);
+
 private:
     std::string specialization;
     std::string phoneNumber;

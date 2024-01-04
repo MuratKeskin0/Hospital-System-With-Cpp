@@ -5,6 +5,8 @@
 #include <string>
 #include <algorithm>
 
+static const int MAX_ADMINS = 3; // Example size
+
 vector<Person *> Database::patients;
 int Database::patientCount = 0;
 int Database::patientID = 0;
@@ -13,7 +15,7 @@ vector<Person *> Database::doctors;
 int Database::doctorCount = 0;
 int Database::doctorID = 0;
 
-vector<Person *> Database::admins;
+Person* Database::admins[MAX_ADMINS] = {nullptr};
 int Database::adminCount = 0;
 int Database::adminID = 0;
 
@@ -176,69 +178,66 @@ void Database::insertPerson(const Person &person)
     }
 }
 
-int Database::readAdmin()
-{
-    ifstream file("../txtFiles/admin.txt");
-    if (!file.is_open())
-    {
-        cerr << "Error while opening the file!" << endl;
+int Database::readAdmin() {
+    std::ifstream file("../txtFiles/admin.txt");
+    if (!file.is_open()) {
+        std::cerr << "Error while opening the file!" << std::endl;
         return -1;
     }
 
     char chunk[128];
     int lineNum = 0;
     Admin *admin = nullptr;
-    int adminCount = 0;
+    int currentAdminIndex = 0; // Index to keep track of the current position in the static array
 
-    while (file.getline(chunk, sizeof(chunk)))
-    {
-        int newline_pos = strcspn(chunk, "\n");
+    while (file.getline(chunk, sizeof(chunk))) {
+        int newline_pos = std::strcspn(chunk, "\n");
         chunk[newline_pos] = '\0';
 
-        if (lineNum % 3 == 0)
-        {
+        if (lineNum % 3 == 0) {
+            // Check if there is space left in the array
+            if (currentAdminIndex >= MAX_ADMINS) {
+                std::cerr << "Error: Maximum number of admins reached." << std::endl;
+                break;
+            }
             admin = new Admin;
-            admin->setId(atoi(chunk));
-            lineNum++;
-        }
-        else if (lineNum % 3 == 1)
-        {
+            admin->setId(std::atoi(chunk));
+        } else if (lineNum % 3 == 1) {
             admin->setUserName(chunk);
-        }
-        else if (lineNum % 3 == 2)
-        {
+        } else if (lineNum % 3 == 2) {
             admin->setPassword(chunk);
-            lineNum++;
-            admins.push_back(admin);
-            adminCount++;
+
+            // Add the admin to the array and increment the index
+            admins[currentAdminIndex++] = admin;
         }
+        lineNum++;
     }
 
-    adminCount = adminCount;
     file.close();
     return 0;
 }
 
 int Database::deleteAdmin(int id) {
-    // Check if the ID is within a valid range
-    if (id < 0 || id >= adminID) {
+    if (id < 0) {
         std::cout << "Please enter a valid ID number!" << std::endl;
         return 0;
     }
 
-    // Check if the admin exists in the vector
-    auto it = std::find_if(admins.begin(), admins.end(), [id](const Person* person) {
-        return person->getId() == id;
-    });
+    bool found = false;
 
-    if (it == admins.end()) {
+    for (int i = 0; i < MAX_ADMINS; ++i) {
+        if (admins[i] != nullptr && admins[i]->getId() == id) {
+            delete admins[i]; // Free the memory
+            admins[i] = nullptr; // Set the pointer to nullptr after deletion
+            found = true;
+            break;
+        }
+    }
+
+    if (!found) {
         std::cout << "Admin with ID " << id << " not found." << std::endl;
         return 0;
     }
-
-    // Remove the admin from the vector
-    delete *it;  // Free the memory
-    admins.erase(it);
 
     // Update the admin.txt file
     std::ifstream file("../txtFiles/admin.txt");
@@ -277,6 +276,7 @@ int Database::deleteAdmin(int id) {
 
     return 0;
 }
+
 
 int Database::readPatient()
 {
@@ -811,11 +811,9 @@ int Database::readAppointment()
     return 0;
 }
 
-void Database::showAllAppointments()
-{
+void Database::showAllAppointments() {
     std::ifstream file("../txtFiles/appointment.txt");
-    if (!file.is_open())
-    {
+    if (!file.is_open()) {
         std::cerr << "Error while opening the file!" << std::endl;
         return;
     }
@@ -823,30 +821,26 @@ void Database::showAllAppointments()
     int id, doctorId, patientId, typeInt;
     std::string date;
     bool isConfirmed;
-
     bool foundAppointments = false;
-    while (file >> id >> patientId >> doctorId >> typeInt >> date >> isConfirmed)
-    {
-        foundAppointments = true;
+
+    while (file >> id >> patientId >> doctorId >> typeInt >> date >> isConfirmed) {
         Appointment::Type type = static_cast<Appointment::Type>(typeInt);
 
-        // Fetching doctor and patient usernames
-        Doctor *doctor = findDoctorById(doctorId);
-        Patient *patient = findPatientById(patientId);
-        std::string doctorUsername = doctor ? doctor->getUserName() : "Unknown";
-        std::string patientUsername = patient ? patient->getUserName() : "Unknown";
+        // Create temporary objects for doctor and patient
+        Doctor tempDoctor = findDoctorById(doctorId) ? *findDoctorById(doctorId) : Doctor();
+        Patient tempPatient = findPatientById(patientId) ? *findPatientById(patientId) : Patient();
 
-        std::cout << "Appointment ID: " << id << std::endl
-                  << "Doctor ID: " << doctorId << " (Username: " << doctorUsername << ")" << std::endl
-                  << "Patient ID: " << patientId << " (Username: " << patientUsername << ")" << std::endl
-                  << "Type: " << static_cast<int>(type) << std::endl
-                  << "Date: " << date << std::endl
-                  << "Confirmed: " << (isConfirmed ? "Yes" : "No") << std::endl
-                  << "-------------------------------\n";
+        // Create a temporary Appointment object
+        Appointment tempAppointment(id, type, tempDoctor, tempPatient, date, isConfirmed);
+
+        // Use overloaded operator to print Appointment details
+        std::cout << tempAppointment << std::endl;
+        std::cout << "-------------------------------\n";
+
+        foundAppointments = true;
     }
 
-    if (!foundAppointments)
-    {
+    if (!foundAppointments) {
         std::cout << "No appointments found." << std::endl;
     }
 
@@ -1116,11 +1110,9 @@ int Database::deleteAppointmentsByPatient(int patientId)
     return deletedCount; // Return the count of deleted appointments
 }
 
-void Database::showAllAppointmentsByDoctor(int doctorId)
-{
+void Database::showAllAppointmentsByDoctor(int doctorId) {
     std::ifstream file("../txtFiles/appointment.txt");
-    if (!file.is_open())
-    {
+    if (!file.is_open()) {
         std::cerr << "Error while opening the file!" << std::endl;
         return;
     }
@@ -1130,41 +1122,36 @@ void Database::showAllAppointmentsByDoctor(int doctorId)
     bool isConfirmed;
     bool found = false;
 
-    while (file >> id >> patientId >> docId >> typeInt >> date >> isConfirmed)
-    {
-        if (docId == doctorId)
-        {
+    while (file >> id >> patientId >> docId >> typeInt >> date >> isConfirmed) {
+        if (docId == doctorId) {
             found = true;
             Appointment::Type type = static_cast<Appointment::Type>(typeInt);
             Doctor *doctor = findDoctorById(docId);
             Patient *patient = findPatientById(patientId);
 
-            std::string doctorUsername = doctor ? doctor->getUserName() : "Unknown";
-            std::string patientUsername = patient ? patient->getUserName() : "Unknown";
+            // If doctor or patient not found, use placeholders
+            if (!doctor || !patient) {
+                std::cerr << "Error: Doctor or Patient not found for Appointment ID " << id << std::endl;
+                continue;
+            }
 
-            std::cout << "Appointment ID: " << id << std::endl
-                      << "Doctor ID: " << docId << " (Username: " << doctorUsername << ")" << std::endl
-                      << "Patient ID: " << patientId << " (Username: " << patientUsername << ")" << std::endl
-                      << "Type: " << static_cast<int>(type) << std::endl
-                      << "Date: " << date << std::endl
-                      << "Confirmed: " << (isConfirmed ? "Yes" : "No") << std::endl
-                      << "--------------------------------\n";
+            // Creating a temporary Appointment object
+            Appointment tempAppointment(id, type, *doctor, *patient, date, isConfirmed);
+            // Using the overloaded << operator to display the appointment information
+            std::cout << tempAppointment << std::endl;
         }
     }
 
-    if (!found)
-    {
+    if (!found) {
         std::cout << "No appointments found for Doctor ID " << doctorId << std::endl;
     }
 
     file.close();
 }
 
-void Database::showAppointmentsByPatient(int patientId)
-{
+void Database::showAppointmentsByPatient(int patientId) {
     std::ifstream file("../txtFiles/appointment.txt");
-    if (!file.is_open())
-    {
+    if (!file.is_open()) {
         std::cerr << "Error while opening the file!" << std::endl;
         return;
     }
@@ -1174,30 +1161,27 @@ void Database::showAppointmentsByPatient(int patientId)
     bool isConfirmed;
     bool found = false;
 
-    while (file >> id >> patId >> docId >> typeInt >> date >> isConfirmed)
-    {
-        if (patId == patientId)
-        {
+    while (file >> id >> patId >> docId >> typeInt >> date >> isConfirmed) {
+        if (patId == patientId) {
             found = true;
             Appointment::Type type = static_cast<Appointment::Type>(typeInt);
             Doctor *doctor = findDoctorById(docId);
             Patient *patient = findPatientById(patId);
 
-            std::string doctorUsername = doctor ? doctor->getUserName() : "Unknown";
-            std::string patientUsername = patient ? patient->getUserName() : "Unknown";
+            // If doctor or patient not found, use placeholders
+            if (!doctor || !patient) {
+                std::cerr << "Error: Doctor or Patient not found for Appointment ID " << id << std::endl;
+                continue;
+            }
 
-            std::cout << "Appointment ID: " << id << std::endl
-                      << "Doctor ID: " << docId << " (Username: " << doctorUsername << ")" << std::endl
-                      << "Patient ID: " << patId << " (Username: " << patientUsername << ")" << std::endl
-                      << "Type: " << static_cast<int>(type) << std::endl
-                      << "Date: " << date << std::endl
-                      << "Confirmed: " << (isConfirmed ? "Yes" : "No") << std::endl
-                      << "--------------------------------\n";
+            // Creating a temporary Appointment object
+            Appointment tempAppointment(id, type, *doctor, *patient, date, isConfirmed);
+            // Using the overloaded << operator to display the appointment information
+            std::cout << tempAppointment << std::endl;
         }
     }
 
-    if (!found)
-    {
+    if (!found) {
         std::cout << "No appointments found for Patient ID " << patientId << std::endl;
     }
 
@@ -1355,7 +1339,7 @@ bool Database::usernameExists(const string &username)
     return false;
 }
 
-void Database::showPersonInformation(const Person *person, int id) {
+/*void Database::showPersonInformation(const Person *person, int id) {
     if (person == nullptr) {
         cout << "No person found with ID " << id << "." << endl;
         return;
@@ -1404,7 +1388,46 @@ void Database::showPersonInformation(const Person *person, int id) {
 
     cout << "No person found with ID " << id << " in file " << filename << "." << endl;
     file.close();
+}*/
+
+void Database::showPatientDoctorRatio() {
+    int numberOfPatients = 0;
+    int numberOfDoctors = 0;
+
+    // Counting the number of patients
+    numberOfPatients = Database::patients.size();
+
+    // Counting the number of doctors
+    numberOfDoctors = Database::doctors.size();
+
+    // Calculating and displaying the ratio
+    if (numberOfDoctors == 0) {
+        cout << "No doctors available to calculate the patient-to-doctor ratio." << endl;
+    } else {
+        double ratio = static_cast<double>(numberOfPatients) / numberOfDoctors;
+        cout << "Ratio of number of patients per doctor: " << ratio << endl;
+    }
 }
 
+void Database::addAppointment(const Appointment& appointment) {
+    appointments.push_back(new Appointment(appointment));
+    insertAppointment(appointment);
+}
 
+void Database::showPersonInformation(int id) {
+    // Attempt to find a Patient, Doctor, or Admin with the given ID
+    Patient* patient = findPatientById(id);
+    if (patient) {
+        std::cout << *patient << std::endl;
+        return;
+    }
+
+    Doctor* doctor = findDoctorById(id);
+    if (doctor) {
+        std::cout << *doctor << std::endl;
+        return;
+    }
+
+    std::cout << "No person found with ID " << id << "." << std::endl;
+}
 

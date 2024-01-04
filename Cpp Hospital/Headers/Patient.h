@@ -17,6 +17,8 @@ public:
     std::string getGender() const;
     void setGender(const std::string& gender);
 
+    friend std::ostream& operator<<(std::ostream& os, const Patient& patient);
+
 private:
     std::string phoneNumber;
     std::string gender;

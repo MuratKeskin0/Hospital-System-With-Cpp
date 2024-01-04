@@ -19,6 +19,8 @@ public:
     void setUserName(const std::string& username);
     void setPassword(const std::string& password);
 
+    friend std::ostream& operator<<(std::ostream& os, const Person& person);
+
 private:
     int id;
     std::string username;

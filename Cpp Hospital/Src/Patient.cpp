@@ -30,4 +30,9 @@ void Patient::setGender(const std::string& gender) {
     this->gender = gender;
 }
 
-
+std::ostream& operator<<(std::ostream& os, const Patient& patient) {
+    os << static_cast<const Person&>(patient); // Call Person's operator<<
+    os << ", Phone Number: " << patient.getPhoneNumber() 
+       << ", Gender: " << patient.getGender();
+    return os;
+}

@@ -4,8 +4,9 @@
 // Constructor
 Appointment::Appointment(int id, Type type, const Doctor& doctor, const Patient& patient, const std::string& date, bool isConfirmed)
     : id(id), type(type), doctor(doctor), patient(patient), date(date), isConfirmed(isConfirmed) {
-        Database::appointments.push_back(this);
-        Database::insertAppointment(*this);
+        /*Database::appointments.push_back(this);
+        Database::insertAppointment(*this);-*/
+        //I remove this because I wanted to use operator overloading, so in order to prevent infinity loop, I did remove this.
 }
 
 // Getter for ID
@@ -68,4 +69,12 @@ void Appointment::setIsConfirmed(bool newIsConfirmed) {
     isConfirmed = newIsConfirmed;
 }
 
-
+std::ostream& operator<<(std::ostream& os, const Appointment& appointment) {
+    os << "Appointment ID: " << appointment.getId() 
+       << ", Type: " << static_cast<int>(appointment.getType()) 
+       << ", Doctor: " << appointment.getDoctor().getUserName() 
+       << ", Patient: " << appointment.getPatient().getUserName() 
+       << ", Date: " << appointment.getDate() 
+       << ", Confirmed: " << (appointment.getIsConfirmed() ? "Yes" : "No");
+    return os;
+}

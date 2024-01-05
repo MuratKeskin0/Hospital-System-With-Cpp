@@ -4,6 +4,8 @@
 #include <cstring>
 #include <string>
 #include <algorithm>
+#include <map> 
+
 
 static const int MAX_ADMINS = 3; // Example size
 
@@ -1306,36 +1308,51 @@ int Database::deleteAllData()
     return 0;
 }
 
-bool Database::usernameExists(const string &username)
-{
-    // Check among patients
-    for (const auto &patient : patients)
-    {
-        if (dynamic_cast<Patient *>(patient)->getUserName() == username)
-        {
+bool Database::usernameExists(const string &username) {
+    // Check in patients file
+    std::ifstream patientFile("../txtFiles/patient.txt");
+    std::string patientLine;
+    while (std::getline(patientFile, patientLine)) {
+        std::string patientUsername;
+        std::getline(patientFile, patientUsername); // Username is the second line for each entry
+        if (patientUsername == username) {
             return true;
+        }
+        // Skip the rest of the patient's data to move to the next entry
+        for (int i = 0; i < 3; i++) {
+            std::getline(patientFile, patientLine);
         }
     }
 
-    // Check among doctors
-    for (const auto &doctor : doctors)
-    {
-        if (dynamic_cast<Doctor *>(doctor)->getUserName() == username)
-        {
+    // Check in doctors file
+    std::ifstream doctorFile("../txtFiles/doctor.txt");
+    std::string doctorLine;
+    while (std::getline(doctorFile, doctorLine)) {
+        std::string doctorUsername;
+        std::getline(doctorFile, doctorUsername); // Username is the second line for each entry
+        if (doctorUsername == username) {
             return true;
+        }
+        // Skip the rest of the doctor's data to move to the next entry
+        for (int i = 0; i < 3; i++) {
+            std::getline(doctorFile, doctorLine);
         }
     }
 
-    // Check among admins
-    for (const auto &admin : admins)
-    {
-        if (dynamic_cast<Admin *>(admin)->getUserName() == username)
-        {
+    // Check in admins file
+    std::ifstream adminFile("../txtFiles/admin.txt");
+    std::string adminLine;
+    while (std::getline(adminFile, adminLine)) {
+        std::string adminUsername;
+        std::getline(adminFile, adminUsername); // Username is the second line for each entry
+        if (adminUsername == username) {
             return true;
         }
+        // Skip the password line to move to the next entry
+        std::getline(adminFile, adminLine);
     }
 
-    // If username not found
+    // If username not found in any file
     return false;
 }
 
@@ -1414,20 +1431,75 @@ void Database::addAppointment(const Appointment& appointment) {
     insertAppointment(appointment);
 }
 
-void Database::showPersonInformation(int id) {
-    // Attempt to find a Patient, Doctor, or Admin with the given ID
-    Patient* patient = findPatientById(id);
-    if (patient) {
-        std::cout << *patient << std::endl;
+void Database::showPersonInformation(const Person *person, int id) {
+    if (person == nullptr) {
+        cout << "No person found with ID " << id << "." << endl;
         return;
     }
 
-    Doctor* doctor = findDoctorById(id);
-    if (doctor) {
-        std::cout << *doctor << std::endl;
-        return;
+    // Use dynamic_cast to check the type of the person and then use the overloaded << operator
+    if (auto *patient = dynamic_cast<const Patient*>(person)) {
+        cout << *patient << endl;
+    } else if (auto *doctor = dynamic_cast<const Doctor*>(person)) {
+        cout << *doctor << endl;
+    } else if (auto *admin = dynamic_cast<const Admin*>(person)) {
+        cout << *admin << endl;
+    } else {
+        cout << "Unknown person type." << endl;
     }
-
-    std::cout << "No person found with ID " << id << "." << std::endl;
 }
 
+void Database::showPatientAppointmentCounts() {
+    std::map<int, int> appointmentCountPerPatient;
+
+    // Count appointments for each patient
+    for (const auto &appointment : appointments) {
+        int patientId = appointment->getPatient().getId();
+        appointmentCountPerPatient[patientId]++;
+    }
+
+    // Create and initialize the 2D array using double pointers
+    int totalPatients = patients.size();
+    int maxAppointments = 0;
+
+    // Find the maximum number of appointments any patient has
+    for (const auto &count : appointmentCountPerPatient) {
+        if (count.second > maxAppointments) {
+            maxAppointments = count.second;
+        }
+    }
+
+    int **patientAppointmentCounts = new int*[totalPatients];
+    for (int i = 0; i < totalPatients; ++i) {
+        patientAppointmentCounts[i] = new int[maxAppointments](); // Initialize with zeroes
+    }
+
+    // Map patients' IDs to indexes in the array
+    std::map<int, int> patientIdToIndex;
+    for (int i = 0; i < totalPatients; ++i) {
+        patientIdToIndex[patients[i]->getId()] = i;
+    }
+
+    // Update the counts in the array
+    for (const auto &appointment : appointments) {
+        int patientId = appointment->getPatient().getId();
+        int patientIndex = patientIdToIndex[patientId];
+        int appointmentIndex = appointmentCountPerPatient[patientId] - 1;
+        patientAppointmentCounts[patientIndex][appointmentIndex]++;
+    }
+
+    // Display the appointment counts
+    for (int i = 0; i < totalPatients; ++i) {
+        std::cout << "Patient ID " << patients[i]->getId() << " appointments: ";
+        for (int j = 0; j < maxAppointments; ++j) {
+            std::cout << patientAppointmentCounts[i][j] << " ";
+        }
+        std::cout << std::endl;
+    }
+
+    // Clean up the 2D array
+    for (int i = 0; i < totalPatients; ++i) {
+        delete[] patientAppointmentCounts[i];
+    }
+    delete[] patientAppointmentCounts;
+}

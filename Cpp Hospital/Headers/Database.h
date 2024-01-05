@@ -70,9 +70,9 @@ public:
     static void setAllIdNumbers();
     static int deleteAllData();
     static int deleteAdmin(int id);
-    static void showPersonInformation(int id);
+    static void showPersonInformation(const Person *person,int id);
     static void showPatientDoctorRatio();
-    
+    static void showPatientAppointmentCounts();
     
 
 };

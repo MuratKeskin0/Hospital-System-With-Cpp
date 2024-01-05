@@ -34,7 +34,6 @@ int Display()
 
     while (true)
     {
-    start:
         if (isLoggedIn && (instanceof <Admin>(account)))
         {
 
@@ -57,7 +56,8 @@ int Display()
             cout << "13- Total Number of All Appointments" << endl;
             cout << "14- Change the statue of an Appointment" << endl;
             cout << "15- Ratio of number of patients per doctor" << endl;
-            cout << "16- Logout" << endl;
+            cout << "16- show Patient Appointment Counts" << endl;
+            cout << "17- Logout" << endl;
 
             cout << "\nSelect an option : ";
 
@@ -130,9 +130,9 @@ int Display()
                     break;
                 }
 
-                cout << "Enter Appointment Type (0 for General, 1 for Emergency, etc.): ";
+                 cout << "Enter Appointment Type (0 for General, 1 for Emergency, etc.): ";
                 cin >> typeInt;
-                if (cin.fail() || typeInt < -1 || typeInt > 2)
+                if (cin.fail() || typeInt < 0 || typeInt > 1)
                 {
                     cin.clear();                                                   // Clear the error state of cin
                     cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Ignore bad input
@@ -575,8 +575,12 @@ int Display()
             case 15:
                 Database::showPatientDoctorRatio();
                 break;
-            
+
             case 16:
+                Database::showPatientAppointmentCounts();
+                break;
+            
+            case 17:
                 isLoggedIn = 0;
                 break;
 
@@ -613,7 +617,7 @@ int Display()
             {
             case 1:
                 cout << "Patient's information" << endl;
-                Database::showPersonInformation(account->getId());
+                Database::showPersonInformation(account,account->getId());
                 break;
             case 2:
             {
@@ -795,7 +799,7 @@ int Display()
             switch (choice)
             {
             case 1:
-                Database::showPersonInformation(account->getId());
+                Database::showPersonInformation(account,account->getId());
                 break;
             case 2:
             {
@@ -944,7 +948,7 @@ int Display()
 
                 if (username.empty() || !(Database::usernameExists(username)) )
                     {
-                        printf ("There is no someone who has %s username.", username, "\n");
+                        printf("There is no one who has '%s' as a username.\n", username.c_str());
                         break;
                     }
 
@@ -1021,7 +1025,7 @@ int Display()
                     Doctor *newDoctor = new Doctor(Database::doctorID++, username, specialization, phoneNumber, password);
                     cout << "Doctor created successfully with ID " << newDoctor->getId() << "!" << endl;
                     isLoggedIn = true;
-                    goto start;
+                    Display();
                 }
                 case 2:
                 {
@@ -1064,7 +1068,7 @@ int Display()
                     cout << "Patient created successfully with ID " << newPatient->getId() << "!" << endl;
 
                     isLoggedIn = true;
-                    goto start;
+                    Display();
                 }
 
                 case 3:

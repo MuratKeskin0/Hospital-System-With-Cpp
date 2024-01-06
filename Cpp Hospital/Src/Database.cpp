@@ -7,7 +7,7 @@
 #include <map> 
 
 
-static const int MAX_ADMINS = 3; // Example size
+static const int MAX_ADMINS = 3; 
 
 vector<Person *> Database::patients;
 int Database::patientCount = 0;
@@ -44,7 +44,6 @@ Person *Database::login(const string &username, const string &password)
             if (instanceof <Patient>(person))
             {
                 cout << "Patient logged in: " << person->getUserName() << endl;
-                // Additional patient-specific logic
             }
             return person;
         }
@@ -58,7 +57,6 @@ Person *Database::login(const string &username, const string &password)
             if (instanceof <Doctor>(person))
             {
                 cout << "Doctor logged in: " << person->getUserName() << endl;
-                // Additional doctor-specific logic
             }
             return person;
         }
@@ -71,7 +69,6 @@ Person *Database::login(const string &username, const string &password)
             if (instanceof <Admin>(person))
             {
                 cout << "Admin logged in: " << person->getUserName() << endl;
-                // Additional admin-specific logic
             }
             return person;
         }
@@ -105,7 +102,6 @@ void Database::insertPerson(const Person &person)
                  << actualPatient.getPassword() << '\n';
 
             patientCount++;
-           // std::cout << "Patient has been written to the file successfully." << std::endl;
         }
         catch (const std::bad_cast &)
         {
@@ -135,7 +131,6 @@ void Database::insertPerson(const Person &person)
                  << actualDoctor.getPassword() << '\n';
 
             doctorCount++;
-          //  std::cout << "Doctor has been written to the file successfully." << std::endl;
         }
         catch (const std::bad_cast &)
         {
@@ -164,7 +159,6 @@ void Database::insertPerson(const Person &person)
                  << actualAdmin.getPassword() << '\n';
 
             adminCount++;
-           // std::cout << "Admin has been written to the file successfully." << std::endl;
         }
         catch (const std::bad_cast &)
         {

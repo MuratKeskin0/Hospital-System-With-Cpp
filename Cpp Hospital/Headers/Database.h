@@ -21,7 +21,7 @@ public:
     static int doctorCount;
     static int doctorID;
 
-    static const int MAX_ADMINS = 3; // Adjust this number as needed
+    static const int MAX_ADMINS = 3; 
     static Person* admins[MAX_ADMINS];
     static int adminCount;
     static int adminID;
@@ -34,7 +34,6 @@ public:
     static Person *login(const string &username, const string &password);
 
     // Function about patient
-    //static void insertPatient(const Person &patient);
     static void insertPerson(const Person& person);
     static int readAdmin();
     static int readPatient();
@@ -42,7 +41,6 @@ public:
     static int deletePatient(const int id);
     static int updatePatientInformation(int id, const std::string& newUsername, const std::string& newPhoneNumber, const std::string& newGender, const std::string& newPassword);
     // Function about doctor
-    //static void insertDoctor(const Person &doctor);
     static int readDoctor();
     static void showAllDoctors();
     static int deleteDoctor(const int id);

@@ -189,14 +189,14 @@ int Display()
                     cin.clear();
                     cin.ignore(numeric_limits<streamsize>::max(), '\n');
                     cout << "Invalid input. Please enter a number." << endl;
-                    break; // Exit the function or handle the error appropriately
+                    break; 
                 }
 
                 Doctor *newDoctor = Database::findDoctorById(newDoctorId);
                 if (!newDoctor)
                 {
                     cout << "Doctor with ID " << newDoctorId << " not found." << endl;
-                    break; // Exit the function or handle the error appropriately
+                    break; 
                 }
 
                 Database::showAllPatients();
@@ -207,24 +207,24 @@ int Display()
                     cin.clear();
                     cin.ignore(numeric_limits<streamsize>::max(), '\n');
                     cout << "Invalid input. Please enter a number." << endl;
-                    break; // Exit the function or handle the error appropriately
+                    break;
                 }
 
                 Patient *newPatient = Database::findPatientById(newPatientId);
                 if (!newPatient)
                 {
                     cout << "Patient with ID " << newPatientId << " not found." << endl;
-                    break; // Exit the function or handle the error appropriately
+                    break;
                 }
 
                 cout << "Enter new Appointment Date (e.g., 2023-12-31): ";
                 cin >> newDate;
 
                 bool appointmentExists = std::any_of(Database::appointments.begin(), Database::appointments.end(),
-                                                     [&newDoctorId, &newDate](const Appointment *appointment)
-                                                     {
-                                                         return appointment->getDoctor().getId() == newDoctorId && appointment->getDate() == newDate;
-                                                     });
+                [&newDoctorId, &newDate](const Appointment *appointment)
+                   {
+                     return appointment->getDoctor().getId() == newDoctorId && appointment->getDate() == newDate;
+                 });
 
                 if (appointmentExists)
                 {
@@ -239,7 +239,7 @@ int Display()
                     cin.clear();
                     cin.ignore(numeric_limits<streamsize>::max(), '\n');
                     cout << "Invalid appointment type entered." << endl;
-                    break; // Exit the function or handle the error appropriately
+                    break; 
                 }
 
                 // Update the appointment details
@@ -322,7 +322,7 @@ int Display()
                 Database::showAllDoctors();
                 break;
 
-            case 7: // Update Doctor
+            case 7: 
             {
                 int doctorId;
                 Database::showAllDoctors();
@@ -691,10 +691,10 @@ int Display()
 
                 // Check if there's already an appointment with the same doctor on the same date
                 bool appointmentExists = std::any_of(Database::appointments.begin(), Database::appointments.end(),
-                                                     [&doctorId, &date](const Appointment *appointment)
-                                                     {
-                                                         return appointment->getDoctor().getId() == doctorId && appointment->getDate() == date;
-                                                     });
+                 [&doctorId, &date](const Appointment *appointment)
+                    {
+                     return appointment->getDoctor().getId() == doctorId && appointment->getDate() == date;
+                    });
 
                 if (appointmentExists)
                 {
@@ -965,7 +965,6 @@ int Display()
                 else
                 {
                     cout << "User not found! Please try again.\n";
-                    // continue;
                 }
                 break;
 

@@ -279,7 +279,7 @@ int Database::readPatient()
     // Clear existing patients to avoid duplicates
     for (auto &patient : patients)
     {
-        delete patient; // Assuming patients were dynamically allocated
+        delete patient; 
     }
     patients.clear();
     ifstream file("../txtFiles/patient.txt");
@@ -475,11 +475,11 @@ void Database::showAllPatients()
     bool foundPatients = false;
     while (std::getline(file, line))
     {
-        id = std::stoi(line);  // First line is ID
-        std::getline(file, username); // Second line is Username
-        std::getline(file, phoneNumber); // Third line is Phone Number
-        std::getline(file, gender); // Fourth line is Gender
-        std::getline(file, password); // Fifth line is Password, which you might not want to display
+        id = std::stoi(line);  
+        std::getline(file, username); 
+        std::getline(file, phoneNumber); 
+        std::getline(file, gender);
+        std::getline(file, password); 
 
         foundPatients = true;
 
@@ -503,7 +503,7 @@ int Database::readDoctor()
     // Clear existing patients to avoid duplicates
     for (auto &doctor : doctors)
     {
-        delete doctor; // Assuming patients were dynamically allocated
+        delete doctor; 
     }
     doctors.clear();
     std::ifstream file("../txtFiles/doctor.txt");
@@ -564,11 +564,11 @@ void Database::showAllDoctors()
     bool foundDoctors = false;
     while (std::getline(file, line))
     {
-        id = std::stoi(line); // First line is ID
-        std::getline(file, username); // Second line is Username
-        std::getline(file, specialization); // Third line is Specialization
-        std::getline(file, phoneNumber); // Fourth line is Phone Number
-        std::getline(file, password); // Fifth line is Password, which you might not want to display
+        id = std::stoi(line); 
+        std::getline(file, username); 
+        std::getline(file, specialization); 
+        std::getline(file, phoneNumber); 
+        std::getline(file, password); 
 
         foundDoctors = true;
 
@@ -769,10 +769,10 @@ void Database::insertAppointment(const Appointment &appointment)
 int Database::readAppointment()
 {
     // Clear existing patients to avoid duplicates
-    /*for (auto& appointment : appointments) {
-        delete appointment;  // Assuming patients were dynamically allocated
+    for (auto& appointment : appointments) {
+        delete appointment;  
     }
-    appointments.clear();*/
+    appointments.clear();
 
     std::ifstream file("../database/appointment.txt");
     if (!file)
@@ -846,7 +846,7 @@ void Database::showAllAppointments() {
 void Database::deleteAppointment(int appointmentID)
 {
     auto it = std::find_if(appointments.begin(), appointments.end(), [appointmentID](const Appointment *appointment)
-                           { return appointment->getId() == appointmentID; });
+       { return appointment->getId() == appointmentID; });
 
     if (it == appointments.end())
     {
@@ -986,7 +986,7 @@ Doctor *Database::findDoctorById(int id)
             return docPtr;
         }
     }
-    return nullptr; // Return nullptr if not found
+    return nullptr; 
 }
 
 Patient *Database::findPatientById(int id)
@@ -999,7 +999,7 @@ Patient *Database::findPatientById(int id)
             return patPtr;
         }
     }
-    return nullptr; // Return nullptr if not found
+    return nullptr; 
 }
 
 Appointment *Database::findAppointmentById(int id)
@@ -1008,10 +1008,10 @@ Appointment *Database::findAppointmentById(int id)
     {
         if (appointment->getId() == id)
         {
-            return appointment; // Found the appointment with the given ID
+            return appointment; 
         }
     }
-    return nullptr; // No appointment found with the given ID
+    return nullptr; 
 }
 
 int Database::deleteAppointmentsByDoctor(int doctorId)
@@ -1080,7 +1080,7 @@ int Database::deleteAppointmentsByPatient(int patientId)
     }
 
     // Update the appointment.txt file
-    std::ofstream temp("../database/temp.txt");
+    std::ofstream temp("../txtFiles/temp.txt");
     if (!temp.is_open())
     {
         std::cerr << "Error while opening the temporary file for writing!" << std::endl;
@@ -1100,17 +1100,17 @@ int Database::deleteAppointmentsByPatient(int patientId)
     temp.close();
 
     // Replace the old file with the updated file
-    std::remove("../database/appointment.txt");
-    std::rename("../database/temp.txt", "../database/appointment.txt");
+    std::remove("../txtFiles/appointment.txt");
+    std::rename("../txtFiles/temp.txt", "../txtFiles/appointment.txt");
 
-    return deletedCount; // Return the count of deleted appointments
+    return deletedCount; 
 }
 
-void Database::showAllAppointmentsByDoctor(int doctorId) {
+int Database::showAllAppointmentsByDoctor(int doctorId) {
     std::ifstream file("../txtFiles/appointment.txt");
     if (!file.is_open()) {
         std::cerr << "Error while opening the file!" << std::endl;
-        return;
+        return 1;  // Return 1 to indicate file opening error
     }
 
     int id, docId, patientId, typeInt;
@@ -1125,31 +1125,32 @@ void Database::showAllAppointmentsByDoctor(int doctorId) {
             Doctor *doctor = findDoctorById(docId);
             Patient *patient = findPatientById(patientId);
 
-            // If doctor or patient not found, use placeholders
             if (!doctor || !patient) {
                 std::cerr << "Error: Doctor or Patient not found for Appointment ID " << id << std::endl;
                 continue;
             }
 
-            // Creating a temporary Appointment object
             Appointment tempAppointment(id, type, *doctor, *patient, date, isConfirmed);
-            // Using the overloaded << operator to display the appointment information
             std::cout << tempAppointment << std::endl;
         }
     }
 
+    file.close();
+
     if (!found) {
         std::cout << "No appointments found for Doctor ID " << doctorId << std::endl;
+        return 1;  // Return 1 to indicate no appointments found
     }
 
-    file.close();
+    return 0;  // Return 0 to indicate success
 }
 
-void Database::showAppointmentsByPatient(int patientId) {
+
+int Database::showAppointmentsByPatient(int patientId) {
     std::ifstream file("../txtFiles/appointment.txt");
     if (!file.is_open()) {
         std::cerr << "Error while opening the file!" << std::endl;
-        return;
+        return 1;
     }
 
     int id, docId, patId, typeInt;
@@ -1179,9 +1180,12 @@ void Database::showAppointmentsByPatient(int patientId) {
 
     if (!found) {
         std::cout << "No appointments found for Patient ID " << patientId << std::endl;
+        return 1;
     }
-
+    
     file.close();
+
+    return 0;
 }
 
 int Database::deleteAppointmentsByDoctorandId(int doctorId, int appointmentId)
@@ -1199,7 +1203,7 @@ int Database::deleteAppointmentsByDoctorandId(int doctorId, int appointmentId)
         if (!temp.is_open())
         {
             std::cerr << "Error while opening the temporary file for writing!" << std::endl;
-            return 0; // Indicate failure
+            return 0;
         }
 
         for (const auto &appointment : appointments)
@@ -1218,7 +1222,7 @@ int Database::deleteAppointmentsByDoctorandId(int doctorId, int appointmentId)
         std::remove("../database/appointment.txt");
         std::rename("../database/temp.txt", "../database/appointment.txt");
 
-        return 1; // Indicating successful deletion
+        return 1; // successful deletion
     }
 
     return 0; // No matching appointment found
@@ -1229,7 +1233,7 @@ int Database::getTotalNumberOfAppointments()
     std::ifstream file("../txtFiles/appointment.txt");
     if (!file.is_open()) {
         std::cerr << "Error while opening the file!" << std::endl;
-        return -1; // Indicate error
+        return -1; 
     }
 
     int lineCount = 0;
@@ -1240,7 +1244,6 @@ int Database::getTotalNumberOfAppointments()
 
     file.close();
 
-    // Assuming each appointment takes up 'n' lines in the file
     int n=6;
     return lineCount / n;
 }
@@ -1349,57 +1352,6 @@ bool Database::usernameExists(const string &username) {
     // If username not found in any file
     return false;
 }
-
-/*void Database::showPersonInformation(const Person *person, int id) {
-    if (person == nullptr) {
-        cout << "No person found with ID " << id << "." << endl;
-        return;
-    }
-
-    string filename;
-    vector<string> propertyLabels;
-
-    // Determine the file and labels based on the person type
-    if (instanceof<Patient>(person)) {
-        filename = "../txtFiles/patient.txt";
-        propertyLabels = {"ID: ", "Username: ", "Phone Number: ", "Gender: ", "Password: "};
-    } else if (instanceof<Doctor>(person)) {
-        filename = "../txtFiles/doctor.txt";
-        propertyLabels = {"ID: ", "Username: ", "Specialization: ", "Phone Number: ", "Password: "};
-    } else if (instanceof<Admin>(person)) {
-        filename = "../txtFiles/admin.txt";
-        propertyLabels = {"ID: ", "Username: ", "Password: "};
-    } else {
-        cout << "Unknown person type." << endl;
-        return;
-    }
-
-    ifstream file(filename);
-    if (!file.is_open()) {
-        cerr << "Error while opening the file: " << filename << endl;
-        return;
-    }
-
-    string line;
-    vector<string> details;
-    while (getline(file, line)) {
-        details.push_back(line);
-        if (details.size() == propertyLabels.size()) {
-            if (stoi(details[0]) == id) {
-                // Display the person's information
-                for (size_t i = 0; i < details.size(); ++i) {
-                    cout << propertyLabels[i] << details[i] << endl;
-                }
-                file.close();
-                return;
-            }
-            details.clear();
-        }
-    }
-
-    cout << "No person found with ID " << id << " in file " << filename << "." << endl;
-    file.close();
-}*/
 
 void Database::showPatientDoctorRatio() {
     int numberOfPatients = 0;

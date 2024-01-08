@@ -57,8 +57,8 @@ public:
     //complex functions
     static int deleteAppointmentsByDoctor(int doctorId);
     static int deleteAppointmentsByPatient(int patientId);
-    static void showAllAppointmentsByDoctor(int doctorId);
-    static void showAppointmentsByPatient(int patientId);
+    static int showAllAppointmentsByDoctor(int doctorId);
+    static int showAppointmentsByPatient(int patientId);
     static int deleteAppointmentsByDoctorandId(int doctorId, int appointmentId);
     static int getTotalNumberOfAppointments();
     static Doctor* findDoctorById(int id);

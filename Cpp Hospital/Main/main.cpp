@@ -724,7 +724,12 @@ int Display()
             case 4:
             {
                 int appointmentId;
-                Database::showAppointmentsByPatient(account->getId());
+                int result=Database::showAppointmentsByPatient(account->getId());
+
+                if(result==1){
+                    break;
+                }
+
                 cout << "Enter Appointment ID to delete: ";
                 cin >> appointmentId;
 
@@ -847,7 +852,12 @@ int Display()
             case 3:
             {
                 int appointmentId;
-                Database::showAllAppointmentsByDoctor(account->getId());
+                int result=Database::showAllAppointmentsByDoctor(account->getId());
+
+                if(result==1){
+                    break;
+                }
+                
                 cout << "Enter Appointment ID to delete: ";
                 cin >> appointmentId;
 
@@ -877,7 +887,12 @@ int Display()
             case 5:
             {
                 int appointmentId;
-                Database::showAllAppointmentsByDoctor(account->getId());
+                int result=Database::showAllAppointmentsByDoctor(account->getId());
+
+                 if(result==1){
+                    break;
+                }
+
                 cout << "Enter the Appointment ID to change status: ";
                 cin >> appointmentId;
 

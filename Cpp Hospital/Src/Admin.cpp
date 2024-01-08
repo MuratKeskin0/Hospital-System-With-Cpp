@@ -16,7 +16,7 @@ Admin::Admin(int id, const std::string& username, const std::string& password)
     if (!inserted) {
         std::cerr << "Error: Maximum number of admins reached. Admin not added." << std::endl;
     } else {
-        Database::insertPerson(*this);  // Assuming insertPerson handles writing to a file or similar
+        Database::insertPerson(*this);  
     }
 }
 

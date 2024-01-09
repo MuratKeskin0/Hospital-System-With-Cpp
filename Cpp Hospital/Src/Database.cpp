@@ -1449,3 +1449,7 @@ void Database::showPatientAppointmentCounts() {
     }
     delete[] patientAppointmentCounts;
 }
+
+
+
+

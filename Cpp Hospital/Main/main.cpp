@@ -105,7 +105,6 @@ int Display()
                     cout << "Invalid input for Patient ID. Please enter a number." << endl;
                     break;
                 }
-
                 // Validate the patient ID
                 Patient *patient = Database::findPatientById(patientId);
                 if (!patient)

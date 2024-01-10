@@ -129,7 +129,7 @@ int Display()
                     break;
                 }
 
-                 cout << "Enter Appointment Type (0 for General, 1 for Emergency, etc.): ";
+                cout << "Enter Appointment Type (0 for General, 1 for Emergency, etc.): ";
                 cin >> typeInt;
                 if (cin.fail() || typeInt < 0 || typeInt > 1)
                 {

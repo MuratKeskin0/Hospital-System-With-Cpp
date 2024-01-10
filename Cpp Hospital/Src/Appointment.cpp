@@ -68,13 +68,16 @@ void Appointment::setDate(const std::string& newDate) {
 void Appointment::setIsConfirmed(bool newIsConfirmed) {
     isConfirmed = newIsConfirmed;
 }
-
 std::ostream& operator<<(std::ostream& os, const Appointment& appointment) {
+    // Convert the enum type to a string
+    std::string typeStr = (appointment.getType() == Appointment::Type::GENERAL) ? "General" : "Emergency";
+
     os << "Appointment ID: " << appointment.getId() 
-       << ", Type: " << static_cast<int>(appointment.getType()) 
+       << ", Type: " << typeStr // Use the string representation of the type
        << ", Doctor: " << appointment.getDoctor().getUserName() 
        << ", Patient: " << appointment.getPatient().getUserName() 
        << ", Date: " << appointment.getDate() 
        << ", Confirmed: " << (appointment.getIsConfirmed() ? "Yes" : "No");
     return os;
 }
+

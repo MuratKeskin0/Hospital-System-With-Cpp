@@ -7,7 +7,7 @@
 
 class Appointment {
 public:
-    enum class Type { GENERAL, SPECIAL };
+    enum class Type { GENERAL, EMERGANCY };
 
     Appointment(int id, Type type, const Doctor& doctor, const Patient& patient, const std::string& date, bool isConfirmed);
 

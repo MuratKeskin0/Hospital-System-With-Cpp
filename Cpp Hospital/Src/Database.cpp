@@ -273,7 +273,6 @@ int Database::deleteAdmin(int id) {
     return 0;
 }
 
-
 int Database::readPatient()
 {
     // Clear existing patients to avoid duplicates
@@ -774,7 +773,7 @@ int Database::readAppointment()
     }
     appointments.clear();
 
-    std::ifstream file("../database/appointment.txt");
+    std::ifstream file("../txtFiles/appointment.txt");
     if (!file)
     {
         std::cerr << "Error while opening the file!" << std::endl;
@@ -944,7 +943,7 @@ void Database::updateAppointmentInfo(int id, Appointment::Type newType, const Do
             appointment->setIsConfirmed(newIsConfirmed);
 
             // Update appointment.txt file to reflect these changes
-            std::ofstream temp("../database/temp.txt");
+            std::ofstream temp("../txtFiles/temp.txt");
             if (!temp.is_open())
             {
                 std::cerr << "Error while opening the temporary file for writing!" << std::endl;
@@ -964,8 +963,8 @@ void Database::updateAppointmentInfo(int id, Appointment::Type newType, const Do
             temp.close();
 
             // Replace the old file with the updated file
-            std::remove("../database/appointment.txt");
-            std::rename("../database/temp.txt", "../database/appointment.txt");
+            std::remove("../txtFiles/appointment.txt");
+            std::rename("../txtFiles/temp.txt", "../txtFiles/appointment.txt");
 
             std::cout << "Appointment with ID " << id << " has been updated successfully." << std::endl;
             return;
@@ -1145,7 +1144,6 @@ int Database::showAllAppointmentsByDoctor(int doctorId) {
     return 0;  // Return 0 to indicate success
 }
 
-
 int Database::showAppointmentsByPatient(int patientId) {
     std::ifstream file("../txtFiles/appointment.txt");
     if (!file.is_open()) {
@@ -1199,7 +1197,7 @@ int Database::deleteAppointmentsByDoctorandId(int doctorId, int appointmentId)
         appointments.erase(it);
 
         // Update the appointment.txt file
-        std::ofstream temp("../database/temp.txt");
+        std::ofstream temp("../txtFiles/temp.txt");
         if (!temp.is_open())
         {
             std::cerr << "Error while opening the temporary file for writing!" << std::endl;
@@ -1219,8 +1217,8 @@ int Database::deleteAppointmentsByDoctorandId(int doctorId, int appointmentId)
         temp.close();
 
         // Replace the old file with the updated file
-        std::remove("../database/appointment.txt");
-        std::rename("../database/temp.txt", "../database/appointment.txt");
+        std::remove("../txtFiles/appointment.txt");
+        std::rename("../txtFiles/temp.txt", "../txtFiles/appointment.txt");
 
         return 1; // successful deletion
     }

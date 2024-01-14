@@ -118,10 +118,10 @@ int Display()
 
                 // Check if there's already an appointment with the same doctor on the same date
                 bool appointmentExists = std::any_of(Database::appointments.begin(), Database::appointments.end(),
-                [&doctorId, &date](const Appointment *appointment)
-                {
-                         return appointment->getDoctor().getId() == doctorId && appointment->getDate() == date;
-                    });
+                                                     [&doctorId, &date](const Appointment *appointment)
+                                                     {
+                                                         return appointment->getDoctor().getId() == doctorId && appointment->getDate() == date;
+                                                     });
 
                 if (appointmentExists)
                 {
@@ -188,14 +188,14 @@ int Display()
                     cin.clear();
                     cin.ignore(numeric_limits<streamsize>::max(), '\n');
                     cout << "Invalid input. Please enter a number." << endl;
-                    break; 
+                    break;
                 }
 
                 Doctor *newDoctor = Database::findDoctorById(newDoctorId);
                 if (!newDoctor)
                 {
                     cout << "Doctor with ID " << newDoctorId << " not found." << endl;
-                    break; 
+                    break;
                 }
 
                 Database::showAllPatients();
@@ -220,10 +220,10 @@ int Display()
                 cin >> newDate;
 
                 bool appointmentExists = std::any_of(Database::appointments.begin(), Database::appointments.end(),
-                [&newDoctorId, &newDate](const Appointment *appointment)
-                   {
-                     return appointment->getDoctor().getId() == newDoctorId && appointment->getDate() == newDate;
-                 });
+                                                     [&newDoctorId, &newDate](const Appointment *appointment)
+                                                     {
+                                                         return appointment->getDoctor().getId() == newDoctorId && appointment->getDate() == newDate;
+                                                     });
 
                 if (appointmentExists)
                 {
@@ -238,7 +238,7 @@ int Display()
                     cin.clear();
                     cin.ignore(numeric_limits<streamsize>::max(), '\n');
                     cout << "Invalid appointment type entered." << endl;
-                    break; 
+                    break;
                 }
 
                 // Update the appointment details
@@ -321,7 +321,7 @@ int Display()
                 Database::showAllDoctors();
                 break;
 
-            case 7: 
+            case 7:
             {
                 int doctorId;
                 Database::showAllDoctors();
@@ -578,7 +578,7 @@ int Display()
             case 16:
                 Database::showPatientAppointmentCounts();
                 break;
-            
+
             case 17:
                 isLoggedIn = 0;
                 break;
@@ -616,7 +616,7 @@ int Display()
             {
             case 1:
                 cout << "Patient's information" << endl;
-                Database::showPersonInformation(account,account->getId());
+                Database::showPersonInformation(account, account->getId());
                 break;
             case 2:
             {
@@ -690,10 +690,10 @@ int Display()
 
                 // Check if there's already an appointment with the same doctor on the same date
                 bool appointmentExists = std::any_of(Database::appointments.begin(), Database::appointments.end(),
-                 [&doctorId, &date](const Appointment *appointment)
-                    {
-                     return appointment->getDoctor().getId() == doctorId && appointment->getDate() == date;
-                    });
+                                                     [&doctorId, &date](const Appointment *appointment)
+                                                     {
+                                                         return appointment->getDoctor().getId() == doctorId && appointment->getDate() == date;
+                                                     });
 
                 if (appointmentExists)
                 {
@@ -723,9 +723,10 @@ int Display()
             case 4:
             {
                 int appointmentId;
-                int result=Database::showAppointmentsByPatient(account->getId());
+                int result = Database::showAppointmentsByPatient(account->getId());
 
-                if(result==1){
+                if (result == 1)
+                {
                     break;
                 }
 
@@ -803,7 +804,7 @@ int Display()
             switch (choice)
             {
             case 1:
-                Database::showPersonInformation(account,account->getId());
+                Database::showPersonInformation(account, account->getId());
                 break;
             case 2:
             {
@@ -851,12 +852,13 @@ int Display()
             case 3:
             {
                 int appointmentId;
-                int result=Database::showAllAppointmentsByDoctor(account->getId());
+                int result = Database::showAllAppointmentsByDoctor(account->getId());
 
-                if(result==1){
+                if (result == 1)
+                {
                     break;
                 }
-                
+
                 cout << "Enter Appointment ID to delete: ";
                 cin >> appointmentId;
 
@@ -886,9 +888,10 @@ int Display()
             case 5:
             {
                 int appointmentId;
-                int result=Database::showAllAppointmentsByDoctor(account->getId());
+                int result = Database::showAllAppointmentsByDoctor(account->getId());
 
-                 if(result==1){
+                if (result == 1)
+                {
                     break;
                 }
 
@@ -960,30 +963,31 @@ int Display()
                 cout << "\nEnter your username: " << endl;
                 cin >> username;
 
-                if (username.empty() || !(Database::usernameExists(username)) )
-                    {
-                        printf("There is no one who has '%s' as a username.\n", username.c_str());
-                        break;
-                    }
+                if (username.empty() || !(Database::usernameExists(username)))
+                {
+                    printf("There is no one who has '%s' as an username.\n", username.c_str());
+                    break;
+                }
 
                 cout << "Enter your password: " << endl;
                 cin >> password;
 
                 cout << "\nLogging in...\n\n";
                 account = Database::login(username, password);
-                if (account != NULL)
+                if (account != nullptr && account->getPassword() == password)
                 {
                     isLoggedIn = true;
                     break;
                 }
                 else
                 {
-                    cout << "User not found! Please try again.\n";
+                    cout << "Incorrect username or password! Please try again.\n";
+                    
                 }
                 break;
 
             case 2:
-                
+
                 cout << "1- Doctor\n";
                 cout << "2- Patient\n";
                 cout << "3- Exit\n";
@@ -1109,7 +1113,10 @@ int Display()
 void defaultInformation()
 {
     Person *admin = new Admin(0, "admin", "admin");
-    Person *user1 = new Patient(1, "murat", "123", "male", "123");
-    Person *user2 = new Patient(2, "mehmet", "321", "male", "321");
+    Person *user1 = new Patient(1, "patient", "123", "male", "123");
+    Person *user2 = new Patient(2, "patient2", "321", "male", "321");
     Person *user3 = new Doctor(1, "doctor", "eye", "12345678", "123");
+    Appointment::Type type = Appointment::Type::EMERGANCY;
+    Appointment *appointment = new Appointment(1, type, *dynamic_cast<Doctor *>(user3), *dynamic_cast<Patient *>(user1), "1111", true);
+    Database::addAppointment(*appointment);
 }

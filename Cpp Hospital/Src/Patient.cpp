@@ -1,5 +1,7 @@
 #include "../Headers/Patient.h"
 #include "../Headers/Database.h"
+#include <iostream>
+
 
 Patient::Patient(int id, const std::string& username, const std::string& phoneNumber, const std::string& gender, const std::string& password)
     : Person(id, username, password), phoneNumber(phoneNumber), gender(gender) {

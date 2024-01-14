@@ -1,5 +1,7 @@
 #include "../Headers/Appointment.h"
 #include "../Headers/Database.h"
+#include <iostream>
+
 
 // Constructor
 Appointment::Appointment(int id, Type type, const Doctor& doctor, const Patient& patient, const std::string& date, bool isConfirmed)
@@ -69,15 +71,13 @@ void Appointment::setIsConfirmed(bool newIsConfirmed) {
     isConfirmed = newIsConfirmed;
 }
 std::ostream& operator<<(std::ostream& os, const Appointment& appointment) {
-    // Convert the enum type to a string
-    std::string typeStr = (appointment.getType() == Appointment::Type::GENERAL) ? "General" : "Emergency";
-
-    os << "Appointment ID: " << appointment.getId() 
-       << ", Type: " << typeStr // Use the string representation of the type
-       << ", Doctor: " << appointment.getDoctor().getUserName() 
-       << ", Patient: " << appointment.getPatient().getUserName() 
-       << ", Date: " << appointment.getDate() 
+    os << "Appointment ID: " << appointment.getId()
+       << ", Type: " << (appointment.getType() == Appointment::Type::GENERAL ? "General" : "Emergency")
+       << ", Doctor: " << appointment.getDoctor().getUserName()
+       << ", Patient: " << appointment.getPatient().getUserName()
+       << ", Date: " << appointment.getDate()
        << ", Confirmed: " << (appointment.getIsConfirmed() ? "Yes" : "No");
     return os;
 }
+
 

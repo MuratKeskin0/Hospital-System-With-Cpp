@@ -1,5 +1,7 @@
 #include "../Headers/Doctor.h"
 #include "../Headers/Database.h"
+#include <iostream>
+
 
 Doctor::Doctor(int id, const std::string& username, const std::string& specialization, const std::string& phoneNumber, const std::string& password)
     : Person(id, username, password), specialization(specialization), phoneNumber(phoneNumber) {

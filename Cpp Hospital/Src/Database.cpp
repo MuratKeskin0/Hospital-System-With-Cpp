@@ -25,7 +25,6 @@ vector<Appointment *> Database::appointments;
 int Database::appointmentCount = 0;
 int Database::appointmentID = 0;
 
-bool flagForDeleteAndUpdate = false;
 
 // for instanceof feature in Cpp
 template <typename Base, typename Derived>
